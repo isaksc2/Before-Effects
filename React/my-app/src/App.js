@@ -1,8 +1,10 @@
 import { createMuiTheme, ThemeProvider, makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { Text } from 'react';
 import NavBar from './components/NavBar'
 import Grid from './components/Grid'
 import Footer from './components/Footer'
+import Player from './components/Player';
 import './App.css';
 //changes to imports 
 import SecurityIcon from '@material-ui/icons/Security';
@@ -81,6 +83,9 @@ function App() {
           <Grid icon={<ImportExportIcon style={{ fill: "#5EA780", height: "125", width: "125" }} />} title="Modular" btnTitle="Show me More" />
           <Grid icon={<ComputerIcon style={{ fill: "#E69426", height: "125", width: "125" }} />} title="Multi-Platform" btnTitle="Show me More" />
           <Grid icon={<HttpIcon style={{ fill: "#2EA09D", height: "125", width: "125" }} />} title="Connected" btnTitle="Show me More" />
+        </div>
+        <div>
+          <Player />
         </div>
         <div className={classes.bigSpace}>
           <Footer />
