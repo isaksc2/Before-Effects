@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text } from 'react';
-import { Button, TextField, Divider } from '@material-ui/core';
+import { Button, TextField, Slider } from '@material-ui/core';
 import { Component, View } from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
@@ -28,7 +28,8 @@ class PlayerContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            player: []
+            player: [],
+            videoDivide: 50,
         };
         this._onReady = this._onReady.bind(this);
         this.clickPause = this.clickPause.bind(this);
@@ -50,6 +51,10 @@ class PlayerContainer extends Component {
         });
     }
 
+    slided() {
+
+    }
+
     // render
     render() {
         //const classes = styles();
@@ -61,11 +66,14 @@ class PlayerContainer extends Component {
                     <div className={classes.childDiv}>
                         <YouTube videoId="SgbF2WRkwgM" onReady={this._onReady} />
                     </div>
-                    <div className={classes.childDiv} style={{ clipPath: "polygon(50% 0%, 50% 100%, 100% 100%, 100% 0%)" }} >
+                    <div className={classes.childDiv} style={{ clipPath: "polygon(" + this.state.videoDivide + "% 0%, " + this.state.videoDivide + "% 100%, 100% 100%, 100% 0%)" }} >
                         <YouTube videoId="fAoRpLbJSVU" onReady={this._onReady} />
                     </div>
                 </div>
                 <Button variant="contained" onClick={this.clickPause}>Contained</Button>
+                <Slider defaultValue={30} onChange={(e, val) => this.setState({ videoDivide: val })} >
+
+                </Slider>
             </div>
         )
     }
