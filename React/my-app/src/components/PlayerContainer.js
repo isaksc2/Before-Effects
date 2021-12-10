@@ -61,13 +61,10 @@ class PlayerContainer extends Component {
                     <div className={classes.childDiv}>
                         <YouTube videoId="SgbF2WRkwgM" onReady={this._onReady} />
                     </div>
-                    <div className={classes.childDiv}>
-                        <div className={classes.childDiv} style={{ clipPath: "polygon(50% 0%, 50% 100%, 100% 100%, 100% 0%)" }} >
-                            <YouTube videoId="fAoRpLbJSVU" onReady={this._onReady} />
-                        </div>
+                    <div className={classes.childDiv} style={{ clipPath: "polygon(50% 0%, 50% 100%, 100% 100%, 100% 0%)" }} >
+                        <YouTube videoId="fAoRpLbJSVU" onReady={this._onReady} />
                     </div>
                 </div>
-
                 <Button variant="contained" onClick={this.clickPause}>Contained</Button>
             </div>
         )
