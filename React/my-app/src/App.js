@@ -4,7 +4,7 @@ import { Text } from 'react';
 import NavBar from './components/NavBar'
 import Grid from './components/Grid'
 import Footer from './components/Footer'
-import Player from './components/Player';
+import PlayerContainer from './components/PlayerContainer';
 import './App.css';
 //changes to imports 
 import SecurityIcon from '@material-ui/icons/Security';
@@ -85,7 +85,7 @@ function App() {
           <Grid icon={<HttpIcon style={{ fill: "#2EA09D", height: "125", width: "125" }} />} title="Connected" btnTitle="Show me More" />
         </div>
         <div>
-          <Player />
+          <PlayerContainer />
         </div>
         <div className={classes.bigSpace}>
           <Footer />
