@@ -30,6 +30,7 @@ class PlayerContainer extends Component {
         this.state = {
             player: [],
             videoDivide: 50,
+            paused: true
         };
         this._onReady = this._onReady.bind(this);
         this.clickPause = this.clickPause.bind(this);
@@ -46,9 +47,17 @@ class PlayerContainer extends Component {
 
     // pause videos
     clickPause() {
+        const paused = this.state.paused;
         this.state.player.forEach((player) => {
-            player.pauseVideo();
+            if (paused) {
+                player.playVideo();
+            }
+            else {
+                player.pauseVideo();
+            }
         });
+
+        this.setState({ paused: !paused })
     }
 
     slided() {
@@ -70,10 +79,13 @@ class PlayerContainer extends Component {
                         <YouTube videoId="fAoRpLbJSVU" onReady={this._onReady} />
                     </div>
                 </div>
-                <Button variant="contained" onClick={this.clickPause}>Contained</Button>
-                <Slider defaultValue={30} onChange={(e, val) => this.setState({ videoDivide: val })} >
+                <Button variant="contained" onClick={this.clickPause}>{(this.state.paused) ? "play" : "pause"}</Button>
+                <div style={{ marginLeft: "0%", marginRight: "0%" }}>
+                    <Slider defaultValue={this.state.videoDivide} step={0.1} onChange={(e, val) => this.setState({ videoDivide: val })} >
+                    </Slider>
 
-                </Slider>
+                </div>
+
             </div>
         )
     }
