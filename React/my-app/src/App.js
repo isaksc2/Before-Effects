@@ -13,6 +13,7 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import ImportExportIcon from '@material-ui/icons/ImportExport';
 import ComputerIcon from '@material-ui/icons/Computer';
 import HttpIcon from '@material-ui/icons/Http';
+import SubmitVideo from './components/SubmitVideo';
 
 const theme = createMuiTheme({
   palette: {
@@ -84,9 +85,8 @@ function App() {
           <Grid icon={<ComputerIcon style={{ fill: "#E69426", height: "125", width: "125" }} />} title="Multi-Platform" btnTitle="Show me More" />
           <Grid icon={<HttpIcon style={{ fill: "#2EA09D", height: "125", width: "125" }} />} title="Connected" btnTitle="Show me More" />
         </div>
-        <div>
-          <PlayerContainer />
-        </div>
+        <SubmitVideo />
+        <PlayerContainer />
         <div className={classes.bigSpace}>
           <Footer />
         </div>
