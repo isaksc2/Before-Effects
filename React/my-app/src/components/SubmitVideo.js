@@ -35,6 +35,7 @@ export default class SubmitVideo extends Component {
 
         const videosCol = collection(db, "videos");
         const videosSnapshot = await getDocs(videosCol);
+
         const videoList = videosSnapshot.docs.map(doc => doc.data());
 
         console.log(videoList);
