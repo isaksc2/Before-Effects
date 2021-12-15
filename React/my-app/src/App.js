@@ -14,6 +14,7 @@ import ImportExportIcon from '@material-ui/icons/ImportExport';
 import ComputerIcon from '@material-ui/icons/Computer';
 import HttpIcon from '@material-ui/icons/Http';
 import SubmitVideo from './components/SubmitVideo';
+//import firebase from './Firebase';
 
 const theme = createMuiTheme({
   palette: {
@@ -62,7 +63,7 @@ const styles = makeStyles({
 
 function App() {
   const classes = styles();
-
+  //const ref = firebase.firestore().collection("videos");
   return (
     <div className="App">
       <ThemeProvider theme={theme}>

@@ -6,4 +6,4 @@ features
     slider divider
     upload to youtube
     login
-    save videos on database
+    save videos on database         user    date    videos urls     sfx setting
