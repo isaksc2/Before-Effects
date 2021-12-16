@@ -46,7 +46,7 @@ export default class SubmitVideo extends Component {
         //const firestore = firebase.firestore();
         //const videosCol = collection(db, "videos");
         const docRef = await addDoc(collection(db, "videos"), {
-            userID: "test3",
+            userID: authentication.currentUser.uid,
             created: serverTimestamp(),
             latestWrite: serverTimestamp(),
             links: "sgdPlDG1-8k ENcnYh79dUY",
