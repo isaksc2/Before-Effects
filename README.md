@@ -25,3 +25,5 @@ features
                 make sure consistent using atomic transaction
                 email verify    to prevent bots
                 gdpr
+
+                create 20 entries for each user, only allow update  - can limit update rate but not create rate

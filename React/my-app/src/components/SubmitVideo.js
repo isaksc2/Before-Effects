@@ -6,15 +6,16 @@ import GoogleLogin from 'react-google-login';
 //import { Uploader } from 'rsuite';
 //import firebase from '../Firebase';
 //import "firebase/firestore";
-import firebase from "../Firebase.js"
-import { getFirestore, collection, getDocs } from "firebase/firestore/lite"
+import { collection, getDocs, addDoc, useFirestore, serverTimestamp } from "firebase/firestore/lite"
 //import { firebase } from "firebase/app";
 //import "firebase/firestore";
 //import "firebase/auth";
 //import { useAuthState } from "react-firebase-hooks/auth";
 //import { useCollectionData } from "react-firebase-hooks/firestore";
+
 import { authentication, db } from '../Firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+
 
 //const [user] = useAuthState(auth);
 
@@ -39,6 +40,17 @@ export default class SubmitVideo extends Component {
         const videoList = videosSnapshot.docs.map(doc => doc.data());
 
         console.log(videoList);
+    }
+
+    sendDB = async () => {
+        //const firestore = firebase.firestore();
+        //const videosCol = collection(db, "videos");
+        const docRef = await addDoc(collection(db, "videos"), {
+            userID: "test3",
+            created: serverTimestamp(),
+            latestWrite: serverTimestamp(),
+            links: "sgdPlDG1-8k ENcnYh79dUY",
+        });
     }
 
     async _onClick3() {
@@ -85,7 +97,8 @@ export default class SubmitVideo extends Component {
                 <Button variant="contained" onClick={this._onClick}>submit video register</Button>
                 <Button variant="contained" onClick={this._onClick2}>submit video in</Button>
                 <Button variant="contained" onClick={this._onClick3}>submit video out</Button>
-                <Button variant="contained" onClick={this.readDB}>db</Button>
+                <Button variant="contained" onClick={this.readDB}>read db</Button>
+                <Button variant="contained" onClick={this.sendDB}>send db</Button>
                 <TextField placeholder="hi" />
                 <TextField placeholder="hi 2" />
             </div>
