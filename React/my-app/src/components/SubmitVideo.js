@@ -13,8 +13,9 @@ import { collection, getDocs, addDoc, useFirestore, serverTimestamp } from "fire
 //import { useAuthState } from "react-firebase-hooks/auth";
 //import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import { authentication, db } from '../Firebase.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { authentication, db, google_provider } from '../Firebase.js';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { FirebaseError } from 'firebase/app';
 
 
 //const [user] = useAuthState(auth);
@@ -41,34 +42,55 @@ export default class SubmitVideo extends Component {
 
         console.log(videoList);
     }
+    eHZapYhPFVfB8wBQrx13KyH2Mpz1
+    sMtMpoHzgDb0he4SJJKskJuuafB2
 
     sendDB = async () => {
         //const firestore = firebase.firestore();
         //const videosCol = collection(db, "videos");
         const docRef = await addDoc(collection(db, "videos"), {
-            userID: authentication.currentUser.uid,
+            userID: authentication().currentUser.uid,
             created: serverTimestamp(),
             latestWrite: serverTimestamp(),
             links: "sgdPlDG1-8k ENcnYh79dUY",
         });
     }
 
+    googleSignIn = () => {
+        //const firestore = firebase.firestore();
+        //const videosCol = collection(db, "videos");
+        const provider = new GoogleAuthProvider();
+        signInWithPopup(authentication(), provider)
+            .then((re) => {
+                console.log(re);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     async _onClick3() {
         const email = "a.b@c.com";
         const password = "1234567";
-        signOut(authentication);
+        signOut(authentication())
+            .then(() => {
+                console.log("signed out");
+            })
+            .catch((error) => {
+                console.log("failed to signout");
+            });
     }
 
     async _onClick2() {
         const email = "a.b@c.com";
         const password = "1234567";
-        signInWithEmailAndPassword(authentication, email, password)
+        signInWithEmailAndPassword(authentication(), email, password)
     }
 
     async _onClick() {
         const email = "a.b@c.com";
         const password = "1234567";
-        createUserWithEmailAndPassword(authentication, email, password);
+        createUserWithEmailAndPassword(authentication(), email, password);
 
         //alert("hi")
         //const response = firebase.firestore().collection('videos');
@@ -99,6 +121,7 @@ export default class SubmitVideo extends Component {
                 <Button variant="contained" onClick={this._onClick3}>submit video out</Button>
                 <Button variant="contained" onClick={this.readDB}>read db</Button>
                 <Button variant="contained" onClick={this.sendDB}>send db</Button>
+                <Button variant="contained" onClick={this.googleSignIn}>google in</Button>
                 <TextField placeholder="hi" />
                 <TextField placeholder="hi 2" />
             </div>

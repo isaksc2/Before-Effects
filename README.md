@@ -27,3 +27,12 @@ features
                 gdpr
 
                 create 20 entries for each user, only allow update  - can limit update rate but not create rate
+
+
+    
+    views
+        start:          small example         upload          myvideos          constant banner
+        my videos:      small list            upload                            constant banner
+        1 video:                              upload          my videos         top banner
+        all videos for 1 user
+        add video
