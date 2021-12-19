@@ -48,7 +48,6 @@ export default class SignInOut extends Component {
             });
     }
 
-
     render() {
         return (
             <div>
