@@ -58,3 +58,4 @@ export default class SignInOut extends Component {
     }
 }
 
+export const googleSignIn = SignInOut.googleSignIn;

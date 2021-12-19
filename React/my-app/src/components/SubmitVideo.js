@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
-import { signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
+import { googleSignIn } from './SignInOut.js';
 
 
 
@@ -13,23 +13,7 @@ export default class SubmitVideo extends Component {
         this.state = {
             toggleSFX: true
         };
-        // automatically update user in navbar
-        onAuthStateChanged(authentication, (user) => {
-            if (user) {
-                // signed in
-                this.props.onUserChange(authentication.currentUser.uid);
-            } else {
-                // signed out
-                this.props.onUserChange("");
-            }
-        });
     }
-
-    handleInputChange = event => {
-        this.props.onUserChange(event.target.value)
-    }
-
-
 
 
     readDB = async () => {
@@ -62,7 +46,7 @@ export default class SubmitVideo extends Component {
         // if not logged in, log in and retry? need "delay" to wait for login?
         if (currentUser == null) {
             console.log("user not logged in")
-            this.googleSignIn();
+            googleSignIn();
             //this.sendDB();
             return;
         }
@@ -93,28 +77,6 @@ export default class SubmitVideo extends Component {
         }
     }
 
-    googleSignIn = () => {
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(authentication, provider)
-            .then((re) => {
-                console.log(re);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
-
-    async logOut() {
-        const email = "a.b@c.com";
-        const password = "1234567";
-        signOut(authentication)
-            .then(() => {
-                console.log("signed out");
-            })
-            .catch((error) => {
-                console.log("failed to signout");
-            });
-    }
 
 
     render() {
@@ -122,8 +84,6 @@ export default class SubmitVideo extends Component {
             <div>
                 <Button variant="contained" onClick={this.readDB}>read db</Button>
                 <Button variant="contained" onClick={this.sendDB}>send db</Button>
-                <Button variant="contained" onClick={this.googleSignIn}>google in</Button>
-                <Button variant="contained" onClick={this.logOut}>log out</Button>
             </div>
         )
     }
