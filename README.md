@@ -36,3 +36,17 @@ features
         1 video:                              upload          my videos         top banner
         all videos for 1 user
         add video
+
+    security
+        1 long document per user?
+        how create the first one?       use uid is doc id
+
+    client side spam control
+        create + update + delete:       20 sec timer        max 20 videos
+        read:                           100 per 
+        
+    info in document
+        links       title       SFX setting
+
+    flow
+        try get     success --> update          fail --> create

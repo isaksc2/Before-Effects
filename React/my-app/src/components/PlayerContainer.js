@@ -1,5 +1,4 @@
 import React from 'react'
-import { Text } from 'react';
 import { Button, TextField, Slider } from '@material-ui/core';
 import { Component, View } from 'react';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -7,6 +6,7 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 import YouTube from 'react-youtube';
 //const [youtubeID] = useState('fAoRpLbJSVU')
 
+// style of overlaying 2 videos
 const styles = theme => ({
     parentDiv: {
         display: "grid",
@@ -22,12 +22,12 @@ const styles = theme => ({
     }
 });
 
+// fixes react-youtube error (?)
 window.YTConfig = {
     host: 'https://www.youtube.com'
 }
 
 class PlayerContainer extends Component {
-    // constructor
     constructor(props) {
         super(props);
         this.state = {
@@ -35,12 +35,12 @@ class PlayerContainer extends Component {
             videoDivide: 50,
             paused: true
         };
-        this._onReady = this._onReady.bind(this);
+        this.onReady = this.onReady.bind(this);
         this.clickPause = this.clickPause.bind(this);
     }
 
     // add youtube player to list of players
-    _onReady(event) {
+    onReady(event) {
         const player = this.state.player;
         player.push(event.target);
         this.setState({
@@ -63,32 +63,24 @@ class PlayerContainer extends Component {
         this.setState({ paused: !paused })
     }
 
-    slided() {
-
-    }
-
     // render
     render() {
-        //const classes = styles();
         const { classes } = this.props;
         return (
             <div>
-                <TextField id="outlined-basic" label="Outlined" variant="outlined" />
                 <div className={classes.parentDiv}>
                     <div className={classes.childDiv}>
-                        <YouTube videoId="SgbF2WRkwgM" onReady={this._onReady} />
+                        <YouTube videoId="SgbF2WRkwgM" onReady={this.onReady} />
                     </div>
                     <div className={classes.childDiv} style={{ clipPath: "polygon(" + this.state.videoDivide + "% 0%, " + this.state.videoDivide + "% 100%, 100% 100%, 100% 0%)" }} >
-                        <YouTube videoId="fAoRpLbJSVU" onReady={this._onReady} />
+                        <YouTube videoId="fAoRpLbJSVU" onReady={this.onReady} />
                     </div>
                 </div>
                 <Button variant="contained" onClick={this.clickPause}>{(this.state.paused) ? "play" : "pause"}</Button>
                 <div style={{ marginLeft: "0%", marginRight: "0%" }}>
                     <Slider value={this.state.videoDivide} step={0.1} onChange={(e, val) => this.setState({ videoDivide: val })} >
                     </Slider>
-
                 </div>
-
             </div >
         )
     }
