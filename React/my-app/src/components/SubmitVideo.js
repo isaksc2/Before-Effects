@@ -1,21 +1,18 @@
 import React, { Component, Uploader, MediaUploader } from 'react';
 //import type {TextInput} from "react-native";
 import { Button, TextField } from '@material-ui/core'
-import ReactDOM from 'react-dom';
-import GoogleLogin from 'react-google-login';
 //import { Uploader } from 'rsuite';
 //import firebase from '../Firebase';
 //import "firebase/firestore";
-import { collection, getDocs, addDoc, useFirestore, serverTimestamp } from "firebase/firestore/lite"
+import { collection, getDocs, addDoc, serverTimestamp } from "firebase/firestore/lite"
 //import { firebase } from "firebase/app";
 //import "firebase/firestore";
 //import "firebase/auth";
 //import { useAuthState } from "react-firebase-hooks/auth";
 //import { useCollectionData } from "react-firebase-hooks/firestore";
 
-import { authentication, db, google_provider } from '../Firebase.js';
+import { authentication, db } from '../Firebase.js';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { FirebaseError } from 'firebase/app';
 
 
 //const [user] = useAuthState(auth);
@@ -91,26 +88,6 @@ export default class SubmitVideo extends Component {
         const email = "a.b@c.com";
         const password = "1234567";
         createUserWithEmailAndPassword(authentication(), email, password);
-
-        //alert("hi")
-        //const response = firebase.firestore().collection('videos');
-        //const t = firebase.firestore();
-
-        //auth();
-        //const db = getFirestore();
-        //const auth = firebase.default.auth();
-        //const ref = (collection(db, "videos")).getDoc(db, "FOncj2p4Pdg3bgJSQLFB");
-
-        //const qa = getDocs(collection(db, "videos"));
-        //alert(qa.metadata)
-        //const citiesRef = collection(db, "videos");
-        //const q = query(citiesRef, where("user", "==", "test user"));
-        //alert(query);
-        //alert(qa.docs)
-        //const docRef = doc(db, "cities", "FOncj2p4Pdg3bgJSQLFB");
-        //const querySnapshot = getDoc(docRef);
-        //alert("sd");
-        //alert(querySnapshot.docs);
     }
 
     render() {

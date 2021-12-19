@@ -22,6 +22,9 @@ const styles = theme => ({
     }
 });
 
+window.YTConfig = {
+    host: 'https://www.youtube.com'
+}
 
 class PlayerContainer extends Component {
     // constructor
@@ -81,12 +84,12 @@ class PlayerContainer extends Component {
                 </div>
                 <Button variant="contained" onClick={this.clickPause}>{(this.state.paused) ? "play" : "pause"}</Button>
                 <div style={{ marginLeft: "0%", marginRight: "0%" }}>
-                    <Slider defaultValue={this.state.videoDivide} step={0.1} onChange={(e, val) => this.setState({ videoDivide: val })} >
+                    <Slider value={this.state.videoDivide} step={0.1} onChange={(e, val) => this.setState({ videoDivide: val })} >
                     </Slider>
 
                 </div>
 
-            </div>
+            </div >
         )
     }
 }
