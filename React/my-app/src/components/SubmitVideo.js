@@ -1,17 +1,30 @@
-import React, { Component, Uploader, MediaUploader } from 'react';
+import React, { Component, Uploader, MediaUploader, useState } from 'react';
 import { Button } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
 import { googleSignIn } from './SignInOut.js';
+import UploadPopup from './UploadPopup.js';
+import Modal from "react-modal"
 
+const customStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+  };
 
 
 export default class SubmitVideo extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            toggleSFX: true
+            toggleSFX: true,
+            modalIsOpen: true
         };
     }
 
@@ -78,12 +91,17 @@ export default class SubmitVideo extends Component {
     }
 
 
-
     render() {
         return (
             <div>
                 <Button variant="contained" onClick={this.readDB}>read db</Button>
                 <Button variant="contained" onClick={this.sendDB}>send db</Button>
+                <Modal
+                    isOpen={this.state.modalIsOpen}
+                    style={customStyles}
+                    contentLabel="Example Modal">
+                </Modal>
+                <UploadPopup trigger ={true}></UploadPopup> 
             </div>
         )
     }
