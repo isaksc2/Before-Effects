@@ -24,7 +24,15 @@ export default class SubmitVideo extends Component {
         super(props);
         this.state = {
             toggleSFX: true,
-            modalIsOpen: false
+            modalIsOpen: false,
+            link1 : "",
+            
+            link2 : "",
+            link2error : false,
+            link2Hint : "",
+
+
+            title : ""
         };
     }
 
@@ -63,11 +71,12 @@ export default class SubmitVideo extends Component {
             //this.sendDB();
             return;
         }
-        console.log(authentication.currentUser.uid);
+        var existingLinks = ""
         try {
             previousVideos = await getDoc(doc(db, "videos", currentUser.uid));
             if (previousVideos.exists()) {
                 newCreated = previousVideos.data().created;
+                existingLinks = previousVideos.data().links + "¤ ";
             } else {
                 newCreated = serverTimestamp();
                 previousVideos = null;
@@ -77,12 +86,13 @@ export default class SubmitVideo extends Component {
             this.dbErrorInfo();
         }
 
+
         // update or create new document
         try {
             await setDoc(doc(db, "videos", currentUser.uid), {
                 created: newCreated,
                 latestWrite: serverTimestamp(),
-                links: "sgdPlDG1-8k ENcnYh79dUY",
+                links: existingLinks + "{"+ this.state.link1 + ";" + this.state.link2 + ";" + this.state.title + "}"
             });
         } catch (e) {
             console.log("failed to update document");
@@ -98,6 +108,47 @@ export default class SubmitVideo extends Component {
         this.setState({modalIsOpen: false})
     }
 
+    // collect data from text fields
+    setLink1 = (link) => {
+        this.setState({link1: link})
+    }
+    setLink2 = (link) => {
+        console.log("check link 2")
+        const videoID = this.getVideoID(link)
+        if (videoID) {
+            if (this.noReservedChars(videoID)) {
+                console.log("ok link 2")
+                this.setState({link2error: false})
+                this.setState({link2Hint: ""})
+                this.setState({link2: videoID})
+            } else {
+                console.log("character not allowed 2")
+                this.setState({link2error: true})
+                this.setState({link2Hint: "cannot contain { } ¤ ;"})
+            }
+        } else {
+            console.log("invalid link 2")
+            this.setState({link2error: true})
+            this.setState({link2Hint: "video link invalid"})
+        }
+    }
+    setTitle = (title) => {
+        if (this.isValidInput(title)) {
+            
+        }
+        this.setState({title: title})
+    }
+    noReservedChars = (input) => {
+        let regex = /\{+|\}+|;+|¤+/
+        return !regex.test(input)
+    }
+
+    getVideoID = (url) => {
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+        var match = url.match(regExp);
+        return (match&&match[7].length==11)? match[7] : false;
+    }
+    
     render() {
         return (
             <div>
@@ -116,13 +167,13 @@ export default class SubmitVideo extends Component {
                         <TextField label = "Link for no-VFX no-music video" style ={{whiteSpace: "pre", overflowWrap: "normal"}}></TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
-                        <TextField label = "Link for VFX video"></TextField>
+                        <TextField error={this.state.link2error} onChange={(e) => this.setLink2(e.target.value)} helperText={this.state.link2Hint} id={this.state.link2error ? "standard-error" : "standard"} label = "Link for VFX video"></TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
                         <TextField label = "Title"></TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
-                        <Button>Upload</Button>
+                        <Button onClick={this.sendDB}>Upload</Button>
                     </div>
                 </Modal>
                 <UploadPopup trigger ={false}></UploadPopup> 
