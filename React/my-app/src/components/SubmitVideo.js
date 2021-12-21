@@ -1,5 +1,5 @@
-import React, { Component, Uploader, MediaUploader, useState } from 'react';
-import { Button } from '@material-ui/core'
+import React, { Component, Uploader, MediaUploader, setState } from 'react';
+import { Button, TextField } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
@@ -24,7 +24,7 @@ export default class SubmitVideo extends Component {
         super(props);
         this.state = {
             toggleSFX: true,
-            modalIsOpen: true
+            modalIsOpen: false
         };
     }
 
@@ -90,18 +90,42 @@ export default class SubmitVideo extends Component {
         }
     }
 
+    openModal = () => {
+        this.setState({modalIsOpen: true})
+    }
+
+    closeModal = () => {
+        this.setState({modalIsOpen: false})
+    }
 
     render() {
         return (
             <div>
                 <Button variant="contained" onClick={this.readDB}>read db</Button>
                 <Button variant="contained" onClick={this.sendDB}>send db</Button>
+                <Button variant="contained" onClick={this.openModal}>open modal</Button>
+
                 <Modal
                     isOpen={this.state.modalIsOpen}
+                    onRequestClose={this.closeModal}
                     style={customStyles}
-                    contentLabel="Example Modal">
+                    contentLabel="Example Modal"
+                >
+                    <Button onClick={this.closeModal} style = {{position: "absolute", top: "0px", right: "0px"}}>X</Button>
+                    <div style={{ display: "flex", justifyContent: "center"}}> 
+                        <TextField label = "Link for no-VFX no-music video" style ={{whiteSpace: "pre", overflowWrap: "normal"}}></TextField>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center"}}>
+                        <TextField label = "Link for VFX video"></TextField>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center"}}>
+                        <TextField label = "Title"></TextField>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "center"}}>
+                        <Button>Upload</Button>
+                    </div>
                 </Modal>
-                <UploadPopup trigger ={true}></UploadPopup> 
+                <UploadPopup trigger ={false}></UploadPopup> 
             </div>
         )
     }
