@@ -3,7 +3,7 @@ import { Button, TextField } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
-import { googleSignIn } from './SignInOut.js';
+import SignInOut from './SignInOut.js';
 import UploadPopup from './UploadPopup.js';
 import Modal from "react-modal"
 
@@ -25,14 +25,21 @@ export default class SubmitVideo extends Component {
         this.state = {
             toggleSFX: true,
             modalIsOpen: false,
-            link1 : "",
+
+            vID1 : "",
+            vID1Temp : "",
+            vID1Error : false,
+            vID1Hint : "",
             
-            link2 : "",
-            link2error : false,
-            link2Hint : "",
+            vID2 : "",
+            vID2Temp : "",
+            vID2Error : false,
+            vID2Hint : "",
 
-
-            title : ""
+            title : "",
+            titleTemp : "",
+            titleError : false,
+            titleHint : ""
         };
     }
 
@@ -67,7 +74,7 @@ export default class SubmitVideo extends Component {
         // if not logged in, log in and retry? need "delay" to wait for login?
         if (currentUser == null) {
             console.log("user not logged in")
-            googleSignIn();
+            SignInOut.googleSignIn();
             //this.sendDB();
             return;
         }
@@ -92,7 +99,7 @@ export default class SubmitVideo extends Component {
             await setDoc(doc(db, "videos", currentUser.uid), {
                 created: newCreated,
                 latestWrite: serverTimestamp(),
-                links: existingLinks + "{"+ this.state.link1 + ";" + this.state.link2 + ";" + this.state.title + "}"
+                links: existingLinks + "{"+ this.state.link1 + ";" + this.state.videoID2 + ";" + this.state.title + "}"
             });
         } catch (e) {
             console.log("failed to update document");
@@ -109,35 +116,31 @@ export default class SubmitVideo extends Component {
     }
 
     // collect data from text fields
-    setLink1 = (link) => {
-        this.setState({link1: link})
-    }
-    setLink2 = (link) => {
+    checkInput = (input, error, hint, temp, saved, isUrl) => {
         console.log("check link 2")
-        const videoID = this.getVideoID(link)
-        if (videoID) {
-            if (this.noReservedChars(videoID)) {
+        this.setState({[temp] : input})
+        const _input = isUrl ? this.getVideoID(input) : input
+        var _error = true
+        var _hint = ""
+        if (input.length == 0) {
+            _hint = isUrl ? "Please enter a link" : "Please enter a title"
+        } else if (_input) {
+            if (this.noReservedChars(_input)) {
                 console.log("ok link 2")
-                this.setState({link2error: false})
-                this.setState({link2Hint: ""})
-                this.setState({link2: videoID})
+                _error = false
+                this.setState({[saved]: _input})
             } else {
                 console.log("character not allowed 2")
-                this.setState({link2error: true})
-                this.setState({link2Hint: "cannot contain { } ¤ ;"})
+                _hint = "cannot contain { } ¤ ;"
             }
         } else {
             console.log("invalid link 2")
-            this.setState({link2error: true})
-            this.setState({link2Hint: "video link invalid"})
+            _hint = "video link invalid, try copying again"
         }
+        this.setState({[error]: _error})
+        this.setState({[hint]: _hint})
     }
-    setTitle = (title) => {
-        if (this.isValidInput(title)) {
-            
-        }
-        this.setState({title: title})
-    }
+
     noReservedChars = (input) => {
         let regex = /\{+|\}+|;+|¤+/
         return !regex.test(input)
@@ -164,16 +167,41 @@ export default class SubmitVideo extends Component {
                 >
                     <Button onClick={this.closeModal} style = {{position: "absolute", top: "0px", right: "0px"}}>X</Button>
                     <div style={{ display: "flex", justifyContent: "center"}}> 
-                        <TextField label = "Link for no-VFX no-music video" style ={{whiteSpace: "pre", overflowWrap: "normal"}}></TextField>
+                    <TextField 
+                            error={this.state.vID1Error} 
+                            onChange={(e) => this.checkInput(e.target.value, "vID1Error", "vID1Hint", "vID1Temp", "vID1", true)} 
+                            helperText={this.state.vID1Hint}
+                            defaultValue = {this.state.vID1Temp}
+                            id={this.state.vID1Error ? "standard-error" : "standard"} 
+                            label = "Link for no VFX video">
+                        </TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
-                        <TextField error={this.state.link2error} onChange={(e) => this.setLink2(e.target.value)} helperText={this.state.link2Hint} id={this.state.link2error ? "standard-error" : "standard"} label = "Link for VFX video"></TextField>
+                        <TextField 
+                            error={this.state.vID2Error} 
+                            onChange={(e) => this.checkInput(e.target.value, "vID2Error", "vID2Hint", "vID2Temp", "vID2", true)} 
+                            helperText={this.state.vID2Hint} 
+                            defaultValue = {this.state.vID2Temp}
+                            id={this.state.vID2Error ? "standard-error" : "standard"} 
+                            label = "Link for VFX video">
+                        </TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
-                        <TextField label = "Title"></TextField>
+                    <TextField 
+                            error={this.state.titleError} 
+                            onChange={(e) => this.checkInput(e.target.value, "titleError", "titleHint", "titleTemp", "title", false)} 
+                            helperText={this.state.titleHint} 
+                            defaultValue = {this.state.titleTemp}
+                            id={this.state.vID2Error ? "standard-error" : "standard"} 
+                            label = "Title">
+                        </TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
-                        <Button onClick={this.sendDB}>Upload</Button>
+                        <Button 
+                            onClick={this.sendDB}
+                            disabled = {this.state.vID1Error || this.state.vID2Error || this.state.titleError}>
+                                Upload
+                        </Button>
                     </div>
                 </Modal>
                 <UploadPopup trigger ={false}></UploadPopup> 
