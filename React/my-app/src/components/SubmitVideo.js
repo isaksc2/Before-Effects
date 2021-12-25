@@ -3,9 +3,10 @@ import { Button, TextField } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
-import SignInOut from './SignInOut.js';
+import SignInOut, { googleSignIn } from './SignInOut.js';
 import UploadPopup from './UploadPopup.js';
 import Modal from "react-modal"
+import { signInAnonymously } from 'firebase/auth';
 
 const customStyles = {
     content: {
@@ -42,6 +43,8 @@ export default class SubmitVideo extends Component {
             titleError: -1,
             titleHint: ""
         };
+        this.ongoingSubmission = false;
+
     }
 
 
@@ -66,6 +69,13 @@ export default class SubmitVideo extends Component {
         }
     }
 
+    // used to resume submission if you had to login halfway through
+    userChanged = () => {
+        if (this.ongoingSubmission) {
+            this.sendDB();
+        }
+    }
+
     // create or update a user's document
     sendDB = async () => {
         // if previous document exists, use old "created"-value
@@ -75,11 +85,14 @@ export default class SubmitVideo extends Component {
         // if not logged in, log in and retry? need "delay" to wait for login?
         if (currentUser == null) {
             console.log("user not logged in")
-            SignInOut.googleSignIn();
+            //SignInOut.googleSignIn();
+            //googleSignIn();
+            this.ongoingSubmission = true;
+            this.props.signIn();
             currentUser = authentication.currentUser
-            //this.sendDB();
             return;
         }
+        this.ongoingSubmission = false;
         var existingLinks = ""
         try {
             previousVideos = await getDoc(doc(db, "videos", currentUser.uid));

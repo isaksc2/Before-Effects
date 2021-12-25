@@ -8,7 +8,7 @@ import { Button } from '@material-ui/core'
 import { Link } from "react-router-dom"
 import { authentication } from '../Firebase'
 import SubmitVideo from './SubmitVideo'
-import SignInOut from './SignInOut'
+import SignInOut, { googleSignIn } from './SignInOut'
 
 export default class NavBar extends Component {
     constructor(props) {
@@ -30,8 +30,8 @@ export default class NavBar extends Component {
             <Toolbar position="sticky">
                 <Link to="/" style={{ marginRight: 16 }}>Start page</Link>
                 <Link to={"/user/" + this.state.user} style={{ marginRight: 16 }}>User page</Link>
-                <SubmitVideo onUserChange={this.handleUserChange} />
-                <SignInOut onUserChange={this.handleUserChange}></SignInOut>
+                <SubmitVideo onUserChange={this.handleUserChange} signIn={() => this.signInOut.googleSignIn()} ref={instance => {this.submitVideo = instance}}/>
+                <SignInOut onUserChange={() => {this.handleUserChange(); this.submitVideo.userChanged()}} ref={instance => {this.signInOut = instance}}></SignInOut>
             </Toolbar>
         )
     }

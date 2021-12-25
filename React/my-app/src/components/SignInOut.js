@@ -25,6 +25,19 @@ export default class SignInOut extends Component {
         });
     }
 
+    
+    async logOut() {
+        const email = "a.b@c.com";
+        const password = "1234567";
+        signOut(authentication)
+        .then(() => {
+            console.log("signed out");
+        })
+        .catch((error) => {
+            console.log("failed to signout");
+        });
+    }
+    
     googleSignIn = () => {
         const provider = new GoogleAuthProvider();
         signInWithPopup(authentication, provider)
@@ -36,18 +49,6 @@ export default class SignInOut extends Component {
             })
     }
 
-    async logOut() {
-        const email = "a.b@c.com";
-        const password = "1234567";
-        signOut(authentication)
-            .then(() => {
-                console.log("signed out");
-            })
-            .catch((error) => {
-                console.log("failed to signout");
-            });
-    }
-
     render() {
         return (
             <div>
@@ -57,4 +58,7 @@ export default class SignInOut extends Component {
     }
 }
 
-export const googleSignIn = SignInOut.googleSignIn;
+export const googleSignIn = () => {
+    var a = new SignInOut();
+    a.googleSignIn();
+}
