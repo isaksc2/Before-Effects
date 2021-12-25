@@ -1,6 +1,6 @@
-import React, { Component, Uploader, MediaUploader } from 'react';
+import React, { Component } from 'react';
 import { Button } from '@material-ui/core'
-import { authentication, db } from '../Firebase.js';
+import { authentication } from '../Firebase.js';
 import { signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from 'firebase/auth';
 
 
@@ -27,8 +27,6 @@ export default class SignInOut extends Component {
 
     
     async logOut() {
-        const email = "a.b@c.com";
-        const password = "1234567";
         signOut(authentication)
         .then(() => {
             console.log("signed out");

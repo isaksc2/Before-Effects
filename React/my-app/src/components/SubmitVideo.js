@@ -1,12 +1,10 @@
-import React, { Component, Uploader, MediaUploader, setState } from 'react';
+import React, { Component } from 'react';
 import { Button, TextField } from '@material-ui/core'
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
 import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
 import { authentication, db } from '../Firebase.js';
-import SignInOut, { googleSignIn } from './SignInOut.js';
 import UploadPopup from './UploadPopup.js';
 import Modal from "react-modal"
-import { signInAnonymously } from 'firebase/auth';
 
 const customStyles = {
     content: {
@@ -137,7 +135,7 @@ export default class SubmitVideo extends Component {
         const _input = isUrl ? this.getVideoID(input) : input
         var _error = 1
         var _hint = ""
-        if (input.length == 0) {
+        if (input.length === 0) {
             _error = -1
         } else if (_input) {
             if (this.noReservedChars(_input)) {
@@ -164,7 +162,7 @@ export default class SubmitVideo extends Component {
     getVideoID = (url) => {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
         var match = url.match(regExp);
-        return (match&&match[7].length==11)? match[7] : false;
+        return (match&&match[7].length===11)? match[7] : false;
     }
     
     render() {
@@ -181,31 +179,31 @@ export default class SubmitVideo extends Component {
                     <Button onClick={this.closeModal} style = {{position: "absolute", top: "0px", right: "0px"}}>X</Button>
                     <div style={{ display: "flex", justifyContent: "center"}}> 
                     <TextField 
-                            error={this.state.vID1Error == 1} 
+                            error={this.state.vID1Error === 1} 
                             onChange={(e) => this.checkInput(e.target.value, "vID1Error", "vID1Hint", "vID1Temp", "vID1", true)} 
                             helperText={this.state.vID1Hint}
                             defaultValue = {this.state.vID1Temp}
-                            id={this.state.vID1Error == 1 ? "standard-error" : "standard"} 
+                            id={this.state.vID1Error === 1 ? "standard-error" : "standard"} 
                             label = "Link for no VFX video">
                         </TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
                         <TextField 
-                            error={this.state.vID2Error == 1} 
+                            error={this.state.vID2Error === 1} 
                             onChange={(e) => this.checkInput(e.target.value, "vID2Error", "vID2Hint", "vID2Temp", "vID2", true)} 
                             helperText={this.state.vID2Hint} 
                             defaultValue = {this.state.vID2Temp}
-                            id={this.state.vID2Error == 1 ? "standard-error" : "standard"} 
+                            id={this.state.vID2Error === 1 ? "standard-error" : "standard"} 
                             label = "Link for VFX video">
                         </TextField>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center"}}>
                     <TextField 
-                            error={this.state.titleError == 1} 
+                            error={this.state.titleError === 1} 
                             onChange={(e) => this.checkInput(e.target.value, "titleError", "titleHint", "titleTemp", "title", false)} 
                             helperText={this.state.titleHint} 
                             defaultValue = {this.state.titleTemp}
-                            id={this.state.vID2Error == 1 ? "standard-error" : "standard"} 
+                            id={this.state.vID2Error === 1 ? "standard-error" : "standard"} 
                             label = "Title">
                         </TextField>
                     </div>

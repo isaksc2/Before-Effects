@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
     parentDiv: {
@@ -18,9 +18,6 @@ const styles = theme => ({
 
 
 class Thumbnail extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     
 
@@ -35,10 +32,10 @@ class Thumbnail extends Component {
                 <h1>{this.props.title}</h1>
                 <div className={classes.parentDiv}>
                     <div className={classes.childDiv}>
-                        <img src = {this.vID2image(this.props.vID1)} />
+                        <img alt={"Thumbnail 1"} src = {this.vID2image(this.props.vID1)} />
                     </div>
                     <div className={classes.childDiv} style={{ clipPath: "polygon(50% 0%, 50% 100%, 100% 100%, 100% 0%)" }} >
-                    <img src = {this.vID2image(this.props.vID2)} />
+                    <img alt={"Thumbnail 2"} src = {this.vID2image(this.props.vID2)} />
                     </div>
                 </div>
             </div>

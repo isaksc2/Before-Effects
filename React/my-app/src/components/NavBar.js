@@ -1,14 +1,8 @@
 import React, { Component } from 'react'
-import CustomButton from './CustomButton'
-import logo from '../images/logo.svg'
-import logoMobile from '../images/logoMobile.svg'
-import { Toolbar, Typography } from '@material-ui/core'
-import { makeStyles } from '@material-ui/core/styles'
-import { Button } from '@material-ui/core'
+import { Toolbar} from '@material-ui/core'
 import { Link } from "react-router-dom"
-import { authentication } from '../Firebase'
 import SubmitVideo from './SubmitVideo'
-import SignInOut, { googleSignIn } from './SignInOut'
+import SignInOut from './SignInOut'
 
 export default class NavBar extends Component {
     constructor(props) {

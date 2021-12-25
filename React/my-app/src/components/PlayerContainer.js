@@ -1,7 +1,7 @@
 import React from 'react'
-import { Button, TextField, Slider } from '@material-ui/core';
-import { Component, View } from 'react';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { Button, Slider } from '@material-ui/core';
+import { Component } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 
 import YouTube from 'react-youtube';
 //const [youtubeID] = useState('fAoRpLbJSVU')
