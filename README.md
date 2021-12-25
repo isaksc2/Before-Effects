@@ -2,6 +2,11 @@
  
 compare before and after VFX + audio
 
+domains
+    CompareVFX  diffvfx     beforeFX    beforeafterfx       showcasevfx
+
+npm run build
+
 features
     slider divider
     upload to youtube

@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /videos/{videoPairID} {
+      allow read;
+    	//allow read: if request.auth.uid == resource.data.userID;
+      allow create: if true || isGoogle() && isMyRequest() && hasTimestamp() && is2Links() && 
+      	hasInitialTimestamp() && noExtraFields(); 
+      allow delete: if isCalm() && isMyResource()                  && hasTimestamp();
+      allow update: if true  || isCalm() && isMyResource() && isMyRequest() && hasTimestamp() && 
+      	is2Links() && sameInitialTimestamp(); 
+      // only write once every 60s
+      function isCalm() {
+    		return request.time > resource.data.latestWrite + duration.value(6, 's');
+      }
+      // submit with timestamp of current time
+  		function hasTimestamp() {
+    		return request.resource.data.latestWrite == request.time;
+  		}
+      // writing    a doc with my id
+      function isMyRequest() {
+    		return request.auth.uid == request.resource.id;
+  		}
+      // writing TO a doc with my id
+      function isMyResource() {
+    		return request.auth.uid == resource.id;
+  		}
+      // 2 links of length 11 + 1 space
+      function is2Links() {
+      	return request.resource.data.links.size() == 11+1+11;
+      }
+      // google sign in?
+      function isGoogle() {
+      	return request.auth.token.firebase.sign_in_provider == "google.com";
+      }
+      // created == latestWrite
+      function hasInitialTimestamp() {
+      	return request.resource.data.latestWrite == request.resource.data.created;
+      }
+      // unchanged "created" on update
+      function sameInitialTimestamp() {
+      	return request.resource.data.created == resource.data.created;
+      }
+      //
+      function noExtraFields() {
+      	return request.resource.data.keys().hasOnly(['created', 'latestWrite', 'links'])
+      }
+    }
+  }
+}
