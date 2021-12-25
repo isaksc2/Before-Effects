@@ -170,9 +170,7 @@ export default class SubmitVideo extends Component {
     render() {
         return (
             <div>
-                <Button variant="contained" onClick={this.readDB}>read db</Button>
-                <Button variant="contained" onClick={this.sendDB}>send db</Button>
-                <Button variant="contained" onClick={this.openModal}>open modal</Button>
+                <Button variant="contained" onClick={this.openModal}>Upload video</Button>
 
                 <Modal
                     isOpen={this.state.modalIsOpen}

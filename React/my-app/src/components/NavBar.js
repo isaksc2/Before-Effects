@@ -29,9 +29,9 @@ export default class NavBar extends Component {
         return (
             <Toolbar position="sticky">
                 <Link to="/" style={{ marginRight: 16 }}>Start page</Link>
-                <Link to={"/user/" + this.state.user} style={{ marginRight: 16 }}>User page</Link>
+                <Link to={"/user/" + this.state.user} style={{ marginRight: 16 }}>My videos</Link>
                 <SubmitVideo onUserChange={this.handleUserChange} signIn={() => this.signInOut.googleSignIn()} ref={instance => {this.submitVideo = instance}}/>
-                <SignInOut onUserChange={() => {this.handleUserChange(); this.submitVideo.userChanged()}} ref={instance => {this.signInOut = instance}}></SignInOut>
+                <SignInOut onUserChange={(uid) => {this.handleUserChange(uid); this.submitVideo.userChanged()}} ref={instance => {this.signInOut = instance}}></SignInOut>
             </Toolbar>
         )
     }
