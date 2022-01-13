@@ -92,11 +92,14 @@ export default class SubmitVideo extends Component {
         }
         this.ongoingSubmission = false;
         var existingLinks = ""
+        var nextPostID = 0
         try {
             previousVideos = await getDoc(doc(db, "videos", currentUser.uid));
             if (previousVideos.exists()) {
-                newCreated = previousVideos.data().created;
-                existingLinks = previousVideos.data().links + "¤ ";
+                var _doc = previousVideos.data()
+                newCreated = _doc.created;
+                existingLinks = _doc.posts + "¤";
+                nextPostID = parseInt(_doc.posts.split(";").pop()) + 1
             } else {
                 newCreated = serverTimestamp();
                 previousVideos = null;
@@ -112,7 +115,7 @@ export default class SubmitVideo extends Component {
             await setDoc(doc(db, "videos", currentUser.uid), {
                 created: newCreated,
                 latestWrite: serverTimestamp(),
-                links: existingLinks + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title
+                links: existingLinks + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + nextPostID
             });
         } catch (e) {
             console.log("failed to update document");

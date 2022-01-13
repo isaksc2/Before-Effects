@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { withStyles } from '@material-ui/core/styles';
+import { Link } from "react-router-dom"
 
 const styles = theme => ({
     parentDiv: {
@@ -13,29 +14,38 @@ const styles = theme => ({
     childDiv: {
         gridColumn: 1,
         gridRow: 1
+    },
+    image: {
+        width: 200
     }
 });
 
 
 class Thumbnail extends Component {
 
-    
+    onClick = () => {
+        <Link 
+            to={"/user/" + this.props.uid  + "/" + this.props.username + "/" + this.props.title + "/" + this.props.vID1 + "/" + this.props.vID2} 
+            style={{ marginRight: 16 }}>
+            My videos
+        </Link>
+    }
 
 
     vID2image = (vID) => {
-        return "https://img.youtube.com/vi/" + vID +"/default.jpg"
+        return "http://img.youtube.com/vi/" + vID +"/maxresdefault.jpg"
     }
     render() {
         const { classes } = this.props;
         return (
-            <div>
+            <div onClick={this.onClick}>
                 <h1>{this.props.title}</h1>
-                <div className={classes.parentDiv}>
-                    <div className={classes.childDiv}>
-                        <img alt={"Thumbnail 1"} src = {this.vID2image(this.props.vID1)} />
+                <div className={classes.parentDiv} >
+                    <div className={classes.childDiv} >
+                        <img alt={"Thumbnail 1"} src = {this.vID2image(this.props.vID1)} className={classes.image}/>
                     </div>
                     <div className={classes.childDiv} style={{ clipPath: "polygon(50% 0%, 50% 100%, 100% 100%, 100% 0%)" }} >
-                    <img alt={"Thumbnail 2"} src = {this.vID2image(this.props.vID2)} />
+                        <img alt={"Thumbnail 2"} src = {this.vID2image(this.props.vID2)} className={classes.image}/>
                     </div>
                 </div>
             </div>

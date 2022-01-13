@@ -6,6 +6,7 @@ import Home from './routes/Home';
 import UserList from './routes/UserList';
 import NavBar from './components/NavBar'
 import { createTheme } from '@material-ui/core/styles'
+import PlayerContainer from './components/PlayerContainer';
 
 const theme = createTheme({
   palette: {
@@ -34,14 +35,29 @@ const theme = createTheme({
 
 
 function Usr() {
-  let { URLuid } = useParams();
+  let { uid } = useParams();
   return (
-    <UserList uid={URLuid}></UserList>
+    <UserList uid={uid}></UserList>
+  )
+}
+
+// find post by fetching database
+function DynamicPost() {
+  let { uid, postID } = useParams();
+  return (
+    <PlayerContainer uid={uid} postID={postID} ></PlayerContainer>
+  )
+}
+
+// show post without fetching database
+function HardPost() {
+  let { uid, userName, title, vID1, vID2 } = useParams();
+  return (
+    <PlayerContainer uid={uid} userName={userName} title={title} vID1={vID1} vID2={vID2}></PlayerContainer>
   )
 }
 
 function App() {
-  //const ref = firebase.firestore().collection("videos");
   return (
     <BrowserRouter>
       <div className="App">
@@ -49,7 +65,9 @@ function App() {
           <NavBar></NavBar>
           <Routes>
             <Route exact path="/" element={<Home />} />
-            <Route exact path="/user/:URLuid" element={<Usr />} />
+            <Route exact path="/user/:uid" element={<Usr />} />
+            <Route exact path="/user/:uid/:postID" element={<DynamicPost />}></Route>
+            <Route exact path="/user/:uid/:userName/:title/:vID1/:vID2" element={<HardPost />}></Route>
           </Routes>
         </ThemeProvider>
       </div>

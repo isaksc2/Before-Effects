@@ -5,7 +5,7 @@ export default class Home extends Component {
     render() {
         return (
             <div>
-                <PlayerContainer />
+                <PlayerContainer vID1="SgbF2WRkwgM" vID2="fAoRpLbJSVU" />
             </div>
         )
     }
