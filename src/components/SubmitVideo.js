@@ -82,10 +82,11 @@ export default class SubmitVideo extends Component {
                     // todo print "too fast"
                 }
                 var _doc = document.data()
-                var nextPostID = parseInt(_doc.posts.split(";").pop()) + 1
+                // increment id or start from 0
+                var nextPostID = _doc.posts ? parseInt(_doc.posts.split(";").pop()) + 1 : 0
                 await updateDoc(doc(db, "videos", currentUser.uid), {
                     latestWrite: serverTimestamp(),
-                    posts: _doc.posts + "¤" + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + nextPostID           
+                    posts: _doc.posts + (_doc.posts ? "¤" : "" ) + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + nextPostID           
                 });
             } else {
                 // create new document
