@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Button, TextField } from '@material-ui/core'
-import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp } from "firebase/firestore/lite"
-import { COOLDOWN, COOLDOWN_MARGIN } from '../Constants.js';
+import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore/lite"
 import { authentication, db } from '../Firebase.js';
 import UploadPopup from './UploadPopup.js';
 import Modal from "react-modal"
+import { validateDocument } from '../Util.js';
 
 const customStyles = {
     content: {
@@ -53,20 +53,6 @@ export default class SubmitVideo extends Component {
         console.log(videoList);
     }
 
-    dbErrorInfo = (document) => {
-        if (authentication.currentUser.uid == null) {
-            console.log("you are not logged in");
-        }
-        if (document != null) {
-            // always want to print when not reach cooldown
-            // ok to print when not reached cooldown yet
-            const remainingTime = document.data().latestWrite.seconds + COOLDOWN - (Date.now() / 1000);
-            if (remainingTime > 0 - COOLDOWN_MARGIN) {
-                console.log("You are editing your portfolio too often, wait " + Math.ceil(remainingTime + 1) + " seconds");
-            }
-        }
-    }
-
     // used to resume submission if you had to login halfway through
     userChanged = () => {
         if (this.ongoingSubmission) {
@@ -76,50 +62,42 @@ export default class SubmitVideo extends Component {
 
     // create or update a user's document
     sendDB = async () => {
-        // if previous document exists, use old "created"-value
-        var newCreated = null;
-        var previousVideos = null;
         var currentUser = authentication.currentUser;
         // if not logged in, log in and retry? need "delay" to wait for login?
         if (currentUser == null) {
             console.log("user not logged in")
-            //SignInOut.googleSignIn();
-            //googleSignIn();
             this.ongoingSubmission = true;
             this.props.signIn();
             currentUser = authentication.currentUser
             return;
         }
         this.ongoingSubmission = false;
-        var existingLinks = ""
-        var nextPostID = 0
         try {
-            previousVideos = await getDoc(doc(db, "videos", currentUser.uid));
-            if (previousVideos.exists()) {
-                var _doc = previousVideos.data()
-                newCreated = _doc.created;
-                existingLinks = _doc.posts + "¤";
-                nextPostID = parseInt(_doc.posts.split(";").pop()) + 1
+            const document = await getDoc(doc(db, "videos", currentUser.uid));
+            if (document.exists()) {
+                // update previous document
+                const failed = validateDocument(document.data());
+                if (failed) {
+                    return
+                    // todo print "too fast"
+                }
+                var _doc = document.data()
+                var nextPostID = parseInt(_doc.posts.split(";").pop()) + 1
+                await updateDoc(doc(db, "videos", currentUser.uid), {
+                    latestWrite: serverTimestamp(),
+                    posts: _doc.posts + "¤" + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + nextPostID           
+                });
             } else {
-                newCreated = serverTimestamp();
-                previousVideos = null;
+                // create new document
+                await setDoc(doc(db, "videos", currentUser.uid), {
+                    created: serverTimestamp(),
+                    latestWrite: serverTimestamp(),
+                    posts: this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + 0,
+                    username: "Guest"    
+                });
             }
         } catch (e) {
             console.log("failed to search existing document");
-            this.dbErrorInfo();
-        }
-
-
-        // update or create new document
-        try {
-            await setDoc(doc(db, "videos", currentUser.uid), {
-                created: newCreated,
-                latestWrite: serverTimestamp(),
-                links: existingLinks + this.state.vID1 + ";" + this.state.vID2 + ";" + this.state.title + ";" + nextPostID
-            });
-        } catch (e) {
-            console.log("failed to update document");
-            this.dbErrorInfo(previousVideos);
         }
     }
 
