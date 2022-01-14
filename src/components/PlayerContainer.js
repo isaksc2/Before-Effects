@@ -35,12 +35,9 @@ class PlayerContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      player: [],
       videoDivide: 50,
       paused: true,
     };
-    this.onReady = this.onReady.bind(this);
-    this.clickPause = this.clickPause.bind(this);
     if (this.props.vID2) {
       this.vID1 = props.vID1;
       this.vID2 = props.vID2;
@@ -57,17 +54,8 @@ class PlayerContainer extends Component {
     }
   }
 
-  // add youtube player to list of players
-  onReady(event) {
-    const player = this.state.player;
-    player.push(event.target);
-    this.setState({
-      player: player,
-    });
-  }
-
   // pause videos
-  clickPause() {
+  clickPause = () => {
     const paused = this.state.paused;
     if (paused) {
       this.player1.playVideo();
@@ -76,27 +64,17 @@ class PlayerContainer extends Component {
       this.player1.pauseVideo();
       this.player2.pauseVideo();
     }
-    /*
-    this.state.player.forEach((player) => {
-      if (paused) {
-        player.playVideo();
-      } else {
-        player.pauseVideo();
-      }
-    });
-    */
-
     this.setState({ paused: !paused });
-  }
+  };
 
   clickSFX = () => {
-    this.state.player.forEach((player) => {
-      if (player.isMuted()) {
-        player.unMute();
-      } else {
-        player.mute();
-      }
-    });
+    if (this.player1.isMuted()) {
+      this.player1.unMute();
+      this.player2.mute();
+    } else {
+      this.player2.unMute();
+      this.player1.mute();
+    }
   };
 
   // get post from database
@@ -124,12 +102,6 @@ class PlayerContainer extends Component {
     } catch (e) {
       console.log("failed to read existing videos");
       console.log(e);
-    }
-  };
-
-  onStateChange = (e) => {
-    if (e.data === ENDED) {
-      e.target.playVideo();
     }
   };
 
