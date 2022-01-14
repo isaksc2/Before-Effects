@@ -5,9 +5,9 @@ import { withStyles } from "@material-ui/core/styles";
 import { getDoc, doc } from "firebase/firestore/lite";
 import { db } from "../Firebase.js";
 import { Link } from "react-router-dom";
-
+import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "../Constants.js";
 import YouTube from "react-youtube";
-import { CollectionsBookmarkOutlined } from "@material-ui/icons";
+import { wait } from "@testing-library/react";
 //const [youtubeID] = useState('fAoRpLbJSVU')
 
 // style of overlaying 2 videos
@@ -69,6 +69,14 @@ class PlayerContainer extends Component {
   // pause videos
   clickPause() {
     const paused = this.state.paused;
+    if (paused) {
+      this.player1.playVideo();
+      this.player2.playVideo();
+    } else {
+      this.player1.pauseVideo();
+      this.player2.pauseVideo();
+    }
+    /*
     this.state.player.forEach((player) => {
       if (paused) {
         player.playVideo();
@@ -76,9 +84,20 @@ class PlayerContainer extends Component {
         player.pauseVideo();
       }
     });
+    */
 
     this.setState({ paused: !paused });
   }
+
+  clickSFX = () => {
+    this.state.player.forEach((player) => {
+      if (player.isMuted()) {
+        player.unMute();
+      } else {
+        player.mute();
+      }
+    });
+  };
 
   // get post from database
   loadPostFromDatabase = async () => {
@@ -108,16 +127,112 @@ class PlayerContainer extends Component {
     }
   };
 
+  onStateChange = (e) => {
+    if (e.data === ENDED) {
+      e.target.playVideo();
+    }
+  };
+
+  // syncing logic
+
+  onPlayer1Ready = (event) => {
+    if (!this.player1) {
+      this.player1 = event.target;
+    }
+    this.player1Ready = true;
+    this.preloading1 = true; // Flag the player 1 preloading
+    //this.player1.mute(); // Mute the player 1
+    //this.player1.hide(); // Hide it todo
+    this.player1.seekTo(1); // Start the preloading and wait a state change event
+  };
+
+  onPlayer2Ready = (event) => {
+    if (!this.player2) {
+      this.player2 = event.target;
+    }
+    this.player2Ready = true; // The foreground video player is not preloaded here
+  };
+
+  onPlayer1StateChange = (event) => {
+    if (event.data === PLAYING) {
+      if (this.preloading1) {
+        //alert("Background ready"); // For testing
+        this.player1.pauseVideo(); // Pause the video
+        this.player1.seekTo(0); // Rewind
+        //this.player1.unMute(); // Comment this after test
+        //$( "#player1" ).show();         // Show the player
+        this.preloading1 = false;
+
+        this.player2Ready = true;
+        this.preloading2 = true; // Flag for foreground video preloading
+        this.player2.mute();
+        //$( "#player2" ).hide();
+        this.player2.seekTo(1); // Start buffering and wait the event
+      } else this.player2.playVideo(); // If not preloading link the 2 players PLAY events
+    } else if (event.data === PAUSED) {
+      if (!this.preloading1) this.player2.pauseVideo(); // If not preloading link the 2 players PAUSE events
+    } else if (event.data === BUFFERING) {
+      if (!this.preloading1) {
+        this.player2.pauseVideo(); // If not preloading link the 2 players BUFFERING events
+      }
+    } else if (event.data === CUED) {
+      if (!this.preloading1) this.player2.pauseVideo(); // If not preloading link the 2 players CUEING events
+    } else if (event.data === ENDED) {
+      this.player2.stopVideo(); // If not preloading link the 2 players ENDING events
+    }
+  };
+
+  onPlayer2StateChange = (event) => {
+    if (event.data === PLAYING) {
+      if (this.preloading2) {
+        //prompt("Foreground ready");
+        this.player2.pauseVideo(); // Pause the video
+        this.player2.seekTo(0); // Rewind
+        this.player2.unMute(); // Unmute
+        this.preloading2 = false;
+        //this.player2.playVideo();
+        /*$( "#player2" ).show(50, function() {
+                                    });
+                                    */
+      } else this.player1.playVideo();
+    } else if (event.data === PAUSED) {
+      if (/*!preloading1 &&*/ !this.preloading2) this.player1.pauseVideo();
+    } else if (event.data === BUFFERING) {
+      if (!this.preloading2) {
+        this.player1.pauseVideo();
+        //player1.seekTo(... // Correct the offset here
+      } else {
+        this.done2 = true;
+      }
+    } else if (event.data === CUED) {
+      if (!this.preloading2) this.player1.pauseVideo();
+    } else if (event.data === ENDED) {
+      this.player1.stopVideo();
+    } else if (event.data === UNSTARTED) {
+      if (this.done2) {
+        this.done2 = false;
+        this.player2.playVideo();
+      }
+    }
+  };
+
   // render
   render() {
     const { classes } = this.props;
+    const opts1 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 } };
+    const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
     return (
       <div>
         <h1>{this.title}</h1>
         <Link to={"/user/" + this.props.uid}>{"By: " + this.username}</Link>
         <div className={classes.parentDiv}>
           <div className={classes.childDiv}>
-            <YouTube videoId={this.vID1} onReady={this.onReady} />
+            <YouTube
+              videoId={this.vID1}
+              opts={opts1}
+              onReady={this.onPlayer1Ready}
+              onStateChange={this.onPlayer1StateChange}
+            />
           </div>
           <div
             className={classes.childDiv}
@@ -126,7 +241,12 @@ class PlayerContainer extends Component {
                 "polygon(" + this.state.videoDivide + "% 0%, " + this.state.videoDivide + "% 100%, 100% 100%, 100% 0%)",
             }}
           >
-            <YouTube videoId={this.vID2} onReady={this.onReady} />
+            <YouTube
+              videoId={this.vID2}
+              opts={opts2}
+              onReady={this.onPlayer2Ready}
+              onStateChange={this.onPlayer2StateChange}
+            />
           </div>
         </div>
         <div>
