@@ -27,6 +27,57 @@ window.YTConfig = {
   host: "https://www.youtube.com",
 };
 
+const CustomSlider = withStyles({
+  root: {
+    color: "#52af77",
+    height: 8,
+    "&$vertical": {
+      width: 8,
+    },
+  },
+  thumb: {
+    height: 340,
+    width: 4,
+    color: "#fff",
+    borderRadius: 0,
+    //backgroundColor: "#fff",
+    //border: "2px solid currentColor",
+    //marginTop: 0,
+    marginBottom: 0,
+    marginLeft: -2,
+    "&:focus, &:hover": {
+      boxShadow: "0px 0px 0px 8px rgba(84, 199, 97, 0.16)",
+    },
+    "&$active": {
+      boxShadow: "0px 0px 0px 12px rgba(84, 199, 97, 0.16)",
+    },
+  },
+  active: {},
+  valueLabel: {
+    left: "calc(-50% + 4px)",
+  },
+  track: {
+    height: 0,
+    borderRadius: 4,
+  },
+  rail: {
+    height: 0,
+    borderRadius: 4,
+  },
+  vertical: {
+    "& $rail": {
+      width: 8,
+    },
+    "& $track": {
+      width: 8,
+    },
+    "& $thumb": {
+      marginLeft: -8,
+      marginBottom: -11,
+    },
+  },
+})(Slider);
+
 class PlayerContainer extends Component {
   constructor(props) {
     super(props);
@@ -180,6 +231,14 @@ class PlayerContainer extends Component {
               onStateChange={this.onPlayer2StateChange}
             />
           </div>
+
+          <div className={classes.childDiv}>
+            <CustomSlider
+              value={this.state.videoDivide}
+              step={0.1}
+              onChange={(e, val) => this.setState({ videoDivide: val })}
+            ></CustomSlider>
+          </div>
         </div>
         <div>
           <Button variant="contained" style={{ marginRight: 16 }} onClick={this.clickSFX}>
@@ -189,13 +248,7 @@ class PlayerContainer extends Component {
             {this.state.paused ? "play" : "pause"}
           </Button>
         </div>
-        <div style={{ marginLeft: "0%", marginRight: "0%" }}>
-          <Slider
-            value={this.state.videoDivide}
-            step={0.1}
-            onChange={(e, val) => this.setState({ videoDivide: val })}
-          ></Slider>
-        </div>
+        <div style={{ marginLeft: "0%", marginRight: "0%" }}></div>
       </div>
     );
   }
