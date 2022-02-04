@@ -34,11 +34,7 @@ class PlayerContainer extends Component {
       videoDivide: 50,
       paused: true,
     };
-    if (this.props.vID2) {
-      this.vID1 = props.vID1;
-      this.vID2 = props.vID2;
-      this.title = props.title;
-      this.username = props.username;
+    if (this.props.uid) {
       // prettify url
       window.history.replaceState(null, "Video post", "/user/" + this.props.uid + "/" + this.props.postID);
     }
@@ -157,12 +153,14 @@ class PlayerContainer extends Component {
     const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
     return (
       <div>
-        <h1>{this.title}</h1>
-        <Link to={"/user/" + this.props.uid}>{"By: " + this.username}</Link>
+        <h1>{this.props.title}</h1>
+        <Link to={"/user/" + this.props.uid} hidden={!this.props.username}>
+          {"By: " + this.props.username}
+        </Link>
         <div className={classes.parentDiv}>
           <div className={classes.childDiv}>
             <YouTube
-              videoId={this.vID1}
+              videoId={this.props.vID1}
               opts={opts1}
               onReady={this.onPlayer1Ready}
               onStateChange={this.onPlayer1StateChange}
@@ -176,7 +174,7 @@ class PlayerContainer extends Component {
             }}
           >
             <YouTube
-              videoId={this.vID2}
+              videoId={this.props.vID2}
               opts={opts2}
               onReady={this.onPlayer2Ready}
               onStateChange={this.onPlayer2StateChange}
