@@ -84,7 +84,10 @@ class PlayerContainer extends Component {
     this.state = {
       videoDivide: 50,
       paused: true,
+      cursorX: 30,
+      cursorY: 30,
     };
+    this.cursorRadius = 10;
     if (this.props.uid) {
       // prettify url
       window.history.replaceState(null, "Video post", "/user/" + this.props.uid + "/" + this.props.postID);
@@ -221,7 +224,39 @@ class PlayerContainer extends Component {
             className={classes.childDiv}
             style={{
               clipPath:
-                "polygon(" + this.state.videoDivide + "% 0%, " + this.state.videoDivide + "% 100%, 100% 100%, 100% 0%)",
+                "polygon(" +
+                this.state.videoDivide +
+                "% 0%, " +
+                this.state.videoDivide +
+                "% " +
+                this.state.cursorY +
+                "%, " +
+                (this.state.cursorX + this.cursorRadius) +
+                "% " +
+                this.state.cursorY +
+                "%, " +
+                this.state.cursorX +
+                "% " +
+                (this.state.cursorY - this.cursorRadius) +
+                "%, " +
+                (this.state.cursorX - this.cursorRadius) +
+                "% " +
+                this.state.cursorY +
+                "%, " +
+                this.state.cursorX +
+                "% " +
+                (this.state.cursorY + this.cursorRadius) +
+                "%, " +
+                (this.state.cursorX + this.cursorRadius) +
+                "% " +
+                this.state.cursorY +
+                "%, " +
+                this.state.videoDivide +
+                "% " +
+                this.state.cursorY +
+                "%, " +
+                this.state.videoDivide +
+                "% 100%, 100% 100%, 100% 0%)",
             }}
           >
             <YouTube
