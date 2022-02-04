@@ -7,6 +7,7 @@ import UserList from "./routes/UserList";
 import NavBar from "./components/NavBar";
 import { createTheme } from "@material-ui/core/styles";
 import PlayerContainer from "./components/PlayerContainer";
+import IntermediatePlayer from "./components/IntermediatePlayer";
 
 const theme = createTheme({
   palette: {
@@ -40,7 +41,7 @@ function Usr() {
 function DynamicPost() {
   console.log("lol");
   let { uid, postID } = useParams();
-  return <PlayerContainer uid={uid} postID={postID} username="" title="" vID1="" vID2=""></PlayerContainer>;
+  return <IntermediatePlayer uid={uid} postID={postID}></IntermediatePlayer>;
 }
 
 // show post without fetching database

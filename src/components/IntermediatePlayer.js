@@ -1,64 +1,32 @@
-import React from "react";
-import { Button, Slider } from "@material-ui/core";
-import { Component } from "react";
+import React, { useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { getDoc, doc } from "firebase/firestore/lite";
 import { db } from "../Firebase.js";
-import { Link } from "react-router-dom";
-import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "../Constants.js";
-import YouTube from "react-youtube";
-import { wait } from "@testing-library/react";
-//const [youtubeID] = useState('fAoRpLbJSVU')
+import { useNavigate } from "react-router-dom";
 
-// style of overlaying 2 videos
-const styles = (theme) => ({
-  parentDiv: {
-    display: "grid",
-    gridTemplateColumns: "1fr",
-    padding: "0px", // 50
-    backgroundColor: "rgba(0,0,0,0.5)",
-    gridRowStart: 1,
-    gridColumnStart: 1,
-  },
-  childDiv: {
-    gridColumn: 1,
-    gridRow: 1,
-  },
-});
-
-// fixes react-youtube error (?)
-window.YTConfig = {
-  host: "https://www.youtube.com",
-};
-
-class PlayerContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loaded: false,
-    };
-  }
-
-  componentDidMount() {
-    this.loadPostFromDatabase();
-    this.setState({ loaded: true });
-  }
+function IntermediatePlayer(props) {
+  const navigate = useNavigate();
 
   // get post from database
-  loadPostFromDatabase = async () => {
+  const loadPostFromDatabase = async () => {
     try {
-      const __doc = await getDoc(doc(db, "videos", this.props.uid));
+      const __doc = await getDoc(doc(db, "videos", props.uid));
       if (__doc.exists()) {
         // parse document
-        var _doc = __doc.data();
+        const _doc = __doc.data();
         const posts = _doc.posts.split("¤");
         for (let i = 0; i < posts.length; i++) {
-          var post = posts[i].split(";");
-          if (post[3] === this.props.postID + "") {
-            this.vID1 = post[0];
-            this.username = _doc.username;
-            this.vID2 = post[1];
-            this.title = post[2];
+          const post = posts[i].split(";");
+          if (post[3] === props.postID + "") {
+            const vID1 = post[0];
+            const username = _doc.username;
+            const vID2 = post[1];
+            const title = post[2];
+            // navigate to new page when loaded
+            navigate(
+              "/user/" + props.uid + "/" + props.postID + "/" + username + "/" + title + "/" + vID1 + "/" + vID2,
+              { replace: true }
+            );
             return;
           }
           console.log("this post does not exist");
@@ -72,32 +40,13 @@ class PlayerContainer extends Component {
     }
   };
 
-  // render
-  render() {
-    const { classes } = this.props;
-    if (this.state.loaded) {
-      const history = useHistory();
-      history.push(
-        "/user/" +
-          this.props.uid +
-          "/" +
-          this.props.postID +
-          "/" +
-          this.username +
-          "/" +
-          this.title +
-          "/" +
-          this.vID1 +
-          "/" +
-          this.vID2
-      );
-    }
-    return (
-      <div>
-        <h1>Loading</h1>
-      </div>
-    );
-  }
+  useEffect(loadPostFromDatabase, []);
+
+  return (
+    <div>
+      <h1>Loading</h1>
+    </div>
+  );
 }
 
-export default withStyles(styles)(PlayerContainer);
+export default IntermediatePlayer;

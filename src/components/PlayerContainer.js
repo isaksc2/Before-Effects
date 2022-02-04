@@ -2,13 +2,9 @@ import React from "react";
 import { Button, Slider } from "@material-ui/core";
 import { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { getDoc, doc } from "firebase/firestore/lite";
-import { db } from "../Firebase.js";
 import { Link } from "react-router-dom";
 import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "../Constants.js";
 import YouTube from "react-youtube";
-import { wait } from "@testing-library/react";
-//const [youtubeID] = useState('fAoRpLbJSVU')
 
 // style of overlaying 2 videos
 const styles = (theme) => ({
@@ -48,13 +44,7 @@ class PlayerContainer extends Component {
     }
   }
 
-  componentDidMount() {
-    if (!this.props.vID2) {
-      this.loadPostFromDatabase();
-    }
-  }
-
-  // pause videos
+  // toggle pause
   clickPause = () => {
     const paused = this.state.paused;
     if (paused) {
@@ -67,6 +57,7 @@ class PlayerContainer extends Component {
     this.setState({ paused: !paused });
   };
 
+  // toggle audio
   clickSFX = () => {
     if (this.player1.isMuted()) {
       this.player1.unMute();
@@ -77,36 +68,7 @@ class PlayerContainer extends Component {
     }
   };
 
-  // get post from database
-  loadPostFromDatabase = async () => {
-    try {
-      const __doc = await getDoc(doc(db, "videos", this.props.uid));
-      if (__doc.exists()) {
-        // parse document
-        var _doc = __doc.data();
-        const posts = _doc.posts.split("¤");
-        for (let i = 0; i < posts.length; i++) {
-          var post = posts[i].split(";");
-          if (post[3] === this.props.postID + "") {
-            this.vID1 = post[0];
-            this.username = _doc.username;
-            this.vID2 = post[1];
-            this.title = post[2];
-            return;
-          }
-          console.log("this post does not exist");
-        }
-      } else {
-        console.log("This user has no posts");
-      }
-    } catch (e) {
-      console.log("failed to read existing videos");
-      console.log(e);
-    }
-  };
-
   // syncing logic
-
   onPlayer1Ready = (event) => {
     if (!this.player1) {
       this.player1 = event.target;
