@@ -11,7 +11,7 @@ export default class Home extends Component {
           <h1 style={{ display: "inline" }}>foreFX</h1>
         </div>
 
-        <h1>Welcome, upload two videos to get started!</h1>
+        <h1>Compare Before and After Versions of your Videos</h1>
         <PlayerContainer vID1="SgbF2WRkwgM" vID2="fAoRpLbJSVU" />
       </div>
     );

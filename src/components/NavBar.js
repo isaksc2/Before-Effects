@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Toolbar, Image } from "@material-ui/core";
+import { Toolbar, Image, AppBar } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import SubmitVideo from "./SubmitVideo";
 import SignInOut from "./SignInOut";
@@ -21,7 +21,7 @@ export default class NavBar extends Component {
 
   render() {
     return (
-      <Toolbar position="sticky" style={{ backgroundColor: "#ff0000" }}>
+      <AppBar position="sticky" style={{ backgroundColor: "#ff0000", position: "sticky", position: "-webkit-sticky" }}>
         <div
           style={{
             display: "flex",
@@ -64,7 +64,7 @@ export default class NavBar extends Component {
             ></SignInOut>
           </div>
         </div>
-      </Toolbar>
+      </AppBar>
     );
   }
 }
