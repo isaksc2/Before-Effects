@@ -208,6 +208,9 @@ function PlayerContainer(props) {
   };
 
   const _onMouseMove = (e) => {
+    if (!mouseArea.current) {
+      return;
+    }
     const rect = mouseArea.current.getBoundingClientRect();
     const x = (100 * (e.clientX - rect.left)) / rect.width; //x position within the element.
     const y = (100 * (e.clientY - rect.top)) / rect.height; //y position within the element.
@@ -224,9 +227,7 @@ function PlayerContainer(props) {
         hidden={false}
         style={{ zIndex: 1000, position: "relative", color: "#00f000", pointerEvents: "none" }}
         //onMouseMove={_onMouseMove.bind(this)}
-      >
-        Child1
-      </div>
+      ></div>
     );
   });
   const mouseArea = useRef(null);
@@ -237,6 +238,9 @@ function PlayerContainer(props) {
     //mouseArea.current.addEventListener("mousemove", _onMouseMove);
 
     document.addEventListener("mousemove", () => {
+      if (!mouseArea.current) {
+        return;
+      }
       const { x, y } = GetCursorPosition();
       console.log(x, y);
       const rect = mouseArea.current.getBoundingClientRect();
