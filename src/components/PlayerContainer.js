@@ -302,12 +302,7 @@ function PlayerContainer(props) {
         <div className={classes.childDiv}>
           <YouTube videoId={props.vID1} opts={opts1} onReady={onplayer1Ready} onStateChange={onplayer1StateChange} />
         </div>
-        <div
-          className={classes.childDiv}
-          style={{
-            clipPath: polygon,
-          }}
-        >
+        <div className={classes.childDiv} style={{ clipPath: polygon }}>
           <YouTube videoId={props.vID2} opts={opts2} onReady={onplayer2Ready} onStateChange={onplayer2StateChange} />
         </div>
         <div className={classes.childDiv}>
