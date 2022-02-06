@@ -1,10 +1,10 @@
-import React from "react";
+import React, { createRef, useState, useRef, useEffect } from "react";
 import { Button, Slider } from "@material-ui/core";
-import { Component } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "../Constants.js";
 import YouTube from "react-youtube";
+import GetCursorPosition from "cursor-position";
 
 // style of overlaying 2 videos
 const styles = (theme) => ({
@@ -17,6 +17,11 @@ const styles = (theme) => ({
     gridColumnStart: 1,
   },
   childDiv: {
+    gridColumn: 1,
+    gridRow: 1,
+  },
+  wrapper: {
+    pointerEvents: "none",
     gridColumn: 1,
     gridRow: 1,
   },
@@ -78,215 +83,247 @@ const CustomSlider = withStyles({
   },
 })(Slider);
 
-class PlayerContainer extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      videoDivide: 50,
-      paused: true,
-      cursorX: 30,
-      cursorY: 30,
-    };
-    this.cursorRadius = 10;
-    if (this.props.uid) {
-      // prettify url
-      window.history.replaceState(null, "Video post", "/user/" + this.props.uid + "/" + this.props.postID);
-    }
+function PlayerContainer(props) {
+  const [videoDivide, setVideoDivide] = useState(50);
+  const [paused, setPaused] = useState(true);
+  const [cursorX, setCursorX] = useState(30);
+  const [cursorY, setCursorY] = useState(30);
+  const cursorRadius = 10;
+  const player1 = useRef(null);
+  const player2 = useRef(null);
+  //var player1.currentReady = false;
+  //var player2.currentReady = false;
+  const preloading1 = useRef(false);
+  const preloading2 = useRef(false);
+  const done2 = useRef(false);
+
+  if (props.uid) {
+    // prettify url
+    window.history.replaceState(null, "Video post", "/user/" + props.uid + "/" + props.postID);
   }
 
   // toggle pause
-  clickPause = () => {
-    const paused = this.state.paused;
+  const clickPause = () => {
     if (paused) {
-      this.player1.playVideo();
-      this.player2.playVideo();
+      player1.current.playVideo();
+      player2.current.playVideo();
     } else {
-      this.player1.pauseVideo();
-      this.player2.pauseVideo();
+      player1.current.pauseVideo();
+      player2.current.pauseVideo();
     }
-    this.setState({ paused: !paused });
+    setPaused(!paused);
   };
 
   // toggle audio
-  clickSFX = () => {
-    if (this.player1.isMuted()) {
-      this.player1.unMute();
-      this.player2.mute();
+  const clickSFX = () => {
+    if (player1.current.isMuted()) {
+      player1.current.unMute();
+      player2.current.mute();
     } else {
-      this.player2.unMute();
-      this.player1.mute();
+      player2.current.unMute();
+      player1.current.mute();
     }
   };
 
   // syncing logic
-  onPlayer1Ready = (event) => {
-    if (!this.player1) {
-      this.player1 = event.target;
+  const onplayer1Ready = (event) => {
+    if (!player1.current) {
+      player1.current = event.target;
     }
-    this.player1Ready = true;
-    this.preloading1 = true; // Flag the player 1 preloading
-    //this.player1.mute(); // Mute the player 1
-    //this.player1.hide(); // Hide it todo
-    this.player1.seekTo(1); // Start the preloading and wait a state change event
+    // player1.currentReady = true; todo - not used?
+    preloading1.current = true; // Flag the player 1 preloading
+    //player1.current.mute(); // Mute the player 1
+    //player1.current.hide(); // Hide it todo
+    player1.current.seekTo(1); // Start the preloading and wait a state change event
   };
 
-  onPlayer2Ready = (event) => {
-    if (!this.player2) {
-      this.player2 = event.target;
+  const onplayer2Ready = (event) => {
+    if (!player2.current) {
+      player2.current = event.target;
     }
-    this.player2Ready = true; // The foreground video player is not preloaded here
+    //player2.currentReady = true; // The foreground video player is not preloaded here
   };
 
-  onPlayer1StateChange = (event) => {
+  const onplayer1StateChange = (event) => {
     if (event.data === PLAYING) {
-      if (this.preloading1) {
+      if (preloading1.current) {
         //alert("Background ready"); // For testing
-        this.player1.pauseVideo(); // Pause the video
-        this.player1.seekTo(0); // Rewind
-        //this.player1.unMute(); // Comment this after test
-        //$( "#player1" ).show();         // Show the player
-        this.preloading1 = false;
+        player1.current.pauseVideo(); // Pause the video
+        player1.current.seekTo(0); // Rewind
+        //player1.current.unMute(); // Comment this after test
+        //$( "#player1.current" ).show();         // Show the player
+        preloading1.current = false;
 
-        this.player2Ready = true;
-        this.preloading2 = true; // Flag for foreground video preloading
-        this.player2.mute();
-        //$( "#player2" ).hide();
-        this.player2.seekTo(1); // Start buffering and wait the event
-      } else this.player2.playVideo(); // If not preloading link the 2 players PLAY events
+        //player2.currentReady = true;
+        preloading2.current = true; // Flag for foreground video preloading
+        player2.current.mute();
+        //$( "#player2.current" ).hide();
+        player2.current.seekTo(1); // Start buffering and wait the event
+      } else player2.current.playVideo(); // If not preloading link the 2 players PLAY events
     } else if (event.data === PAUSED) {
-      if (!this.preloading1) this.player2.pauseVideo(); // If not preloading link the 2 players PAUSE events
+      if (!preloading1.current) player2.current.pauseVideo(); // If not preloading link the 2 players PAUSE events
     } else if (event.data === BUFFERING) {
-      if (!this.preloading1) {
-        this.player2.pauseVideo(); // If not preloading link the 2 players BUFFERING events
+      if (!preloading1.current) {
+        player2.current.pauseVideo(); // If not preloading link the 2 players BUFFERING events
       }
     } else if (event.data === CUED) {
-      if (!this.preloading1) this.player2.pauseVideo(); // If not preloading link the 2 players CUEING events
+      if (!preloading1.current) player2.current.pauseVideo(); // If not preloading link the 2 players CUEING events
     } else if (event.data === ENDED) {
-      this.player2.stopVideo(); // If not preloading link the 2 players ENDING events
+      player2.current.stopVideo(); // If not preloading link the 2 players ENDING events
     }
   };
 
-  onPlayer2StateChange = (event) => {
+  const onplayer2StateChange = (event) => {
     if (event.data === PLAYING) {
-      if (this.preloading2) {
+      if (preloading2.current) {
         //prompt("Foreground ready");
-        this.player2.pauseVideo(); // Pause the video
-        this.player2.seekTo(0); // Rewind
-        this.player2.unMute(); // Unmute
-        this.preloading2 = false;
-        //this.player2.playVideo();
-        /*$( "#player2" ).show(50, function() {
+        player2.current.pauseVideo(); // Pause the video
+        player2.current.seekTo(0); // Rewind
+        player2.current.unMute(); // Unmute
+        preloading2.current = false;
+        //player2.current.playVideo();
+        /*$( "#player2.current" ).show(50, function() {
                                     });
                                     */
-      } else this.player1.playVideo();
+      } else player1.current.playVideo();
     } else if (event.data === PAUSED) {
-      if (/*!preloading1 &&*/ !this.preloading2) this.player1.pauseVideo();
+      if (/*!preloading1.current &&*/ !preloading2.current) player1.current.pauseVideo();
     } else if (event.data === BUFFERING) {
-      if (!this.preloading2) {
-        this.player1.pauseVideo();
-        //player1.seekTo(... // Correct the offset here
+      if (!preloading2.current) {
+        player1.current.pauseVideo();
+        //player1.current.seekTo(... // Correct the offset here
       } else {
-        this.done2 = true;
+        done2.current = true;
       }
     } else if (event.data === CUED) {
-      if (!this.preloading2) this.player1.pauseVideo();
+      if (!preloading2.current) player1.current.pauseVideo();
     } else if (event.data === ENDED) {
-      this.player1.stopVideo();
+      player1.current.stopVideo();
     } else if (event.data === UNSTARTED) {
-      if (this.done2) {
-        this.done2 = false;
-        this.player2.playVideo();
+      if (done2.current) {
+        done2.current = false;
+        player2.current.playVideo();
       }
     }
   };
 
-  // render
-  render() {
-    const { classes } = this.props;
-    const opts1 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 } };
-    const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
-    return (
-      <div>
-        <h1>{this.props.title}</h1>
-        <Link to={"/user/" + this.props.uid} hidden={!this.props.username}>
-          {"By: " + this.props.username}
-        </Link>
-        <div className={classes.parentDiv}>
-          <div className={classes.childDiv}>
-            <YouTube
-              videoId={this.props.vID1}
-              opts={opts1}
-              onReady={this.onPlayer1Ready}
-              onStateChange={this.onPlayer1StateChange}
-            />
-          </div>
-          <div
-            className={classes.childDiv}
-            style={{
-              clipPath:
-                "polygon(" +
-                this.state.videoDivide +
-                "% 0%, " +
-                this.state.videoDivide +
-                "% " +
-                this.state.cursorY +
-                "%, " +
-                (this.state.cursorX + this.cursorRadius) +
-                "% " +
-                this.state.cursorY +
-                "%, " +
-                this.state.cursorX +
-                "% " +
-                (this.state.cursorY - this.cursorRadius) +
-                "%, " +
-                (this.state.cursorX - this.cursorRadius) +
-                "% " +
-                this.state.cursorY +
-                "%, " +
-                this.state.cursorX +
-                "% " +
-                (this.state.cursorY + this.cursorRadius) +
-                "%, " +
-                (this.state.cursorX + this.cursorRadius) +
-                "% " +
-                this.state.cursorY +
-                "%, " +
-                this.state.videoDivide +
-                "% " +
-                this.state.cursorY +
-                "%, " +
-                this.state.videoDivide +
-                "% 100%, 100% 100%, 100% 0%)",
-            }}
-          >
-            <YouTube
-              videoId={this.props.vID2}
-              opts={opts2}
-              onReady={this.onPlayer2Ready}
-              onStateChange={this.onPlayer2StateChange}
-            />
-          </div>
+  const _onMouseMove = (e) => {
+    const rect = mouseArea.current.getBoundingClientRect();
+    const x = (100 * (e.clientX - rect.left)) / rect.width; //x position within the element.
+    const y = (100 * (e.clientY - rect.top)) / rect.height; //y position within the element.
+    console.log(x + " ::::: " + y);
+    setCursorX(x);
+    setCursorY(y);
+  };
 
-          <div className={classes.childDiv}>
-            <CustomSlider
-              value={this.state.videoDivide}
-              step={0.1}
-              onChange={(e, val) => this.setState({ videoDivide: val })}
-            ></CustomSlider>
-          </div>
-        </div>
-        <div>
-          <Button variant="contained" style={{ marginRight: 16 }} onClick={this.clickSFX}>
-            Toggle SFX
-          </Button>
-          <Button variant="contained" style={{ marginRight: 16 }} onClick={this.clickPause}>
-            {this.state.paused ? "play" : "pause"}
-          </Button>
-        </div>
-        <div style={{ marginLeft: "0%", marginRight: "0%" }}></div>
+  const MouseArea = React.forwardRef((props, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={classes.childDiv}
+        hidden={false}
+        style={{ zIndex: 1000, position: "relative", color: "#00f000", pointerEvents: "none" }}
+        //onMouseMove={_onMouseMove.bind(this)}
+      >
+        Child1
       </div>
     );
-  }
+  });
+  const mouseArea = useRef(null);
+  //console.log(mouseArea.current);
+
+  useEffect(() => {
+    //mouseArea.current.style.pointerEvents = "auto";
+    //mouseArea.current.addEventListener("mousemove", _onMouseMove);
+
+    document.addEventListener("mousemove", () => {
+      const { x, y } = GetCursorPosition();
+      console.log(x, y);
+      const rect = mouseArea.current.getBoundingClientRect();
+      const x2 = (100 * (x - rect.left)) / rect.width; //x position within the element.
+      const y2 = (100 * (y - rect.top)) / rect.height; //y position within the element.
+      setCursorX(x2);
+      setCursorY(y2);
+    });
+
+    return () => {
+      //console.log("removed");
+      //mouseArea.current.removeEventListener("mousemove", _onMouseMove);
+    };
+    // eslint-disable-next-line
+  }, []);
+
+  // render
+  const { classes } = props;
+  const opts1 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 } };
+  const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
+  return (
+    <div style={{ backgroundColor: "#000000" }}>
+      <h1>{props.title}</h1>
+      <Link to={"/user/" + props.uid} hidden={!props.username}>
+        {"By: " + props.username}
+      </Link>
+      <div className={classes.parentDiv}>
+        <MouseArea ref={mouseArea}>aaaa</MouseArea>
+        <div className={classes.childDiv}>
+          <YouTube videoId={props.vID1} opts={opts1} onReady={onplayer1Ready} onStateChange={onplayer1StateChange} />
+        </div>
+        <div
+          className={classes.childDiv}
+          style={{
+            clipPath:
+              "polygon(" +
+              videoDivide +
+              "% 0%, " +
+              videoDivide +
+              "% " +
+              cursorY +
+              "%, " +
+              (cursorX + cursorRadius) +
+              "% " +
+              cursorY +
+              "%, " +
+              cursorX +
+              "% " +
+              (cursorY - cursorRadius) +
+              "%, " +
+              (cursorX - cursorRadius) +
+              "% " +
+              cursorY +
+              "%, " +
+              cursorX +
+              "% " +
+              (cursorY + cursorRadius) +
+              "%, " +
+              (cursorX + cursorRadius) +
+              "% " +
+              cursorY +
+              "%, " +
+              videoDivide +
+              "% " +
+              cursorY +
+              "%, " +
+              videoDivide +
+              "% 100%, 100% 100%, 100% 0%)",
+          }}
+        >
+          <YouTube videoId={props.vID2} opts={opts2} onReady={onplayer2Ready} onStateChange={onplayer2StateChange} />
+        </div>
+        <div className={classes.childDiv}>
+          <CustomSlider value={videoDivide} step={0.1} onChange={(e, val) => setVideoDivide(val)}></CustomSlider>
+        </div>
+      </div>
+      <div>
+        <Button variant="contained" style={{ marginRight: 16 }} onClick={clickSFX}>
+          Toggle SFX
+        </Button>
+        <Button variant="contained" style={{ marginRight: 16 }} onClick={clickPause}>
+          {paused ? "play" : "pause"}
+        </Button>
+      </div>
+      <div style={{ marginLeft: "0%", marginRight: "0%" }}></div>
+    </div>
+  );
 }
 
 export default withStyles(styles)(PlayerContainer);
