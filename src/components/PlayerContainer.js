@@ -257,6 +257,40 @@ function PlayerContainer(props) {
   const { classes } = props;
   const opts1 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 } };
   const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
+  const polygon =
+    "polygon(" +
+    videoDivide +
+    "% 0%, " +
+    videoDivide +
+    "% " +
+    cursorY +
+    "%, " +
+    (cursorX + cursorRadius) +
+    "% " +
+    cursorY +
+    "%, " +
+    cursorX +
+    "% " +
+    (cursorY - cursorRadius) +
+    "%, " +
+    (cursorX - cursorRadius) +
+    "% " +
+    cursorY +
+    "%, " +
+    cursorX +
+    "% " +
+    (cursorY + cursorRadius) +
+    "%, " +
+    (cursorX + cursorRadius) +
+    "% " +
+    cursorY +
+    "%, " +
+    videoDivide +
+    "% " +
+    cursorY +
+    "%, " +
+    videoDivide +
+    "% 100%, 100% 100%, 100% 0%)";
   return (
     <div style={{ backgroundColor: "#000000" }}>
       <h1>{props.title}</h1>
@@ -271,40 +305,7 @@ function PlayerContainer(props) {
         <div
           className={classes.childDiv}
           style={{
-            clipPath:
-              "polygon(" +
-              videoDivide +
-              "% 0%, " +
-              videoDivide +
-              "% " +
-              cursorY +
-              "%, " +
-              (cursorX + cursorRadius) +
-              "% " +
-              cursorY +
-              "%, " +
-              cursorX +
-              "% " +
-              (cursorY - cursorRadius) +
-              "%, " +
-              (cursorX - cursorRadius) +
-              "% " +
-              cursorY +
-              "%, " +
-              cursorX +
-              "% " +
-              (cursorY + cursorRadius) +
-              "%, " +
-              (cursorX + cursorRadius) +
-              "% " +
-              cursorY +
-              "%, " +
-              videoDivide +
-              "% " +
-              cursorY +
-              "%, " +
-              videoDivide +
-              "% 100%, 100% 100%, 100% 0%)",
+            clipPath: polygon,
           }}
         >
           <YouTube videoId={props.vID2} opts={opts2} onReady={onplayer2Ready} onStateChange={onplayer2StateChange} />
