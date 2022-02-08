@@ -7,7 +7,7 @@ export default class Home extends Component {
     return (
       <div>
         <div>
-          <img src={logo} style={{ height: 90, marginTop: 40, marginBottom: -32, marginRight: -30 }}></img>{" "}
+          <img src={logo} alt={""} style={{ height: 90, marginTop: 40, marginBottom: -32, marginRight: -30 }}></img>
           <h1 style={{ display: "inline" }}>foreFX</h1>
         </div>
 

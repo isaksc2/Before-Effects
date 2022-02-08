@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Toolbar, Image, AppBar } from "@material-ui/core";
+import { AppBar, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import SubmitVideo from "./SubmitVideo";
 import SignInOut from "./SignInOut";
@@ -21,11 +21,10 @@ export default class NavBar extends Component {
 
   render() {
     return (
-      <AppBar position="sticky" style={{ backgroundColor: "#ff0000", position: "sticky", position: "-webkit-sticky" }}>
+      <AppBar style={{ position: "sticky" }}>
         <div
           style={{
             display: "flex",
-            backgroundColor: "#0000ff",
             position: "absolute",
             right: 0,
             left: 0,
@@ -33,12 +32,11 @@ export default class NavBar extends Component {
           }}
         >
           <Link to="/" style={{ marginRight: 16 }}>
-            <img src={logo} style={{ height: 50 }}></img>
+            <img src={logo} alt={""} style={{ height: 50 }}></img>
           </Link>
           <div
             style={{
               display: "flex",
-              backgroundColor: "#00ff00",
               position: "absolute",
               right: 0,
             }}
@@ -50,9 +48,12 @@ export default class NavBar extends Component {
                 this.submitVideo = instance;
               }}
             />
-            <Link to={"/user/" + this.state.user} style={{ marginRight: 16 }}>
-              My videos
+            <Button variant="contained">
+
+            <Link to={"/user/" + this.state.user} style={{ marginRight: 16, textDecoration: 'none' }} underline = "none">
+              Your videos
             </Link>
+            </Button>
             <SignInOut
               onUserChange={(uid) => {
                 this.handleUserChange(uid);

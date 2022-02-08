@@ -1,4 +1,4 @@
-import React, { createRef, useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Button, Slider } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
@@ -207,17 +207,6 @@ function PlayerContainer(props) {
     }
   };
 
-  const _onMouseMove = (e) => {
-    if (!mouseArea.current) {
-      return;
-    }
-    const rect = mouseArea.current.getBoundingClientRect();
-    const x = (100 * (e.clientX - rect.left)) / rect.width; //x position within the element.
-    const y = (100 * (e.clientY - rect.top)) / rect.height; //y position within the element.
-    console.log(x + " ::::: " + y);
-    setCursorX(x);
-    setCursorY(y);
-  };
 
   const MouseArea = React.forwardRef((props, ref) => {
     return (
@@ -296,9 +285,9 @@ function PlayerContainer(props) {
     videoDivide +
     "% 100%, 100% 100%, 100% 0%)";
   return (
-    <div style={{ backgroundColor: "#000000" }}>
+    <div style={{ }}>
       <h1>{props.title}</h1>
-      <Link to={"/user/" + props.uid} hidden={!props.username}>
+      <Link to={"/user/" + props.uid} hidden={!props.username} color="inherit">
         {"By: " + props.username}
       </Link>
       <div className={classes.parentDiv}>
@@ -321,7 +310,6 @@ function PlayerContainer(props) {
           {paused ? "play" : "pause"}
         </Button>
       </div>
-      <div style={{ marginLeft: "0%", marginRight: "0%" }}></div>
     </div>
   );
 }

@@ -45,6 +45,7 @@ export default class UserList extends Component {
   };
 
   editUsername = async () => {
+    console.log("edit")
     var currentState = this.state.editingUsername;
     // if click "save" --> save username
     if (currentState) {
@@ -91,7 +92,7 @@ export default class UserList extends Component {
 
   render() {
     return (
-      <div>
+      <div style = {{marginTop: 80}}>
         <TextField
           disabled={!this.state.editingUsername}
           onChange={(e) => this.checkInput(e.target)}
