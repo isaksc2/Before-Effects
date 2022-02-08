@@ -214,7 +214,7 @@ function PlayerContainer(props) {
         ref={ref}
         className={classes.childDiv}
         hidden={false}
-        style={{ zIndex: 1000, position: "relative", color: "#00f000", pointerEvents: "none" }}
+        style={{ zIndex: 1000, position: "relative", color: "#00f000" }}
         //onMouseMove={_onMouseMove.bind(this)}
       ></div>
     );
