@@ -96,10 +96,13 @@ function PlayerContainer(props) {
   const preloading2 = useRef(false);
   const done2 = useRef(false);
 
-  if (props.uid) {
-    // prettify url
-    window.history.replaceState(null, "Video post", "/user/" + props.uid + "/" + props.postID);
-  }
+  useEffect(() => {
+    if (props.uid) {
+      // prettify url
+      window.history.replaceState(null, "Video post", "/user/" + props.uid + "/" + props.postID);
+    }
+    // eslint-disable-next-line
+  }, []);
 
   // toggle pause
   const clickPause = () => {
