@@ -21,10 +21,7 @@ export default class NavBar extends Component {
 
   render() {
     const VideosPutton = () => {
-      console.log("vid butn");
-      console.log(this.state.user);
       if (this.state.user) {
-        console.log("found user");
         return (
           <Button variant="contained">
             <Link to={"/user/" + this.state.user} style={{ marginRight: 16, textDecoration: "none" }} underline="none">
@@ -67,7 +64,6 @@ export default class NavBar extends Component {
             <VideosPutton></VideosPutton>
             <SignInOut
               onUserChange={(uid) => {
-                console.log("user changed");
                 this.handleUserChange(uid);
                 this.submitVideo.userChanged();
               }}

@@ -86,8 +86,7 @@ const CustomSlider = withStyles({
 function PlayerContainer(props) {
   const [videoDivide, setVideoDivide] = useState(50);
   const [paused, setPaused] = useState(true);
-  const [cursorX, setCursorX] = useState(30);
-  const [cursorY, setCursorY] = useState(30);
+  const [cursor, setCursor] = useState([30, 30]);
   const cursorRadius = 10;
   const player1 = useRef(null);
   const player2 = useRef(null);
@@ -234,8 +233,7 @@ function PlayerContainer(props) {
       const rect = mouseArea.current.getBoundingClientRect();
       const x2 = (100 * (x - rect.left)) / rect.width; //x position within the element.
       const y2 = (100 * (y - rect.top)) / rect.height; //y position within the element.
-      setCursorX(x2);
-      setCursorY(y2);
+      setCursor([x2, y2]);
     });
 
     return () => {
@@ -255,31 +253,31 @@ function PlayerContainer(props) {
     "% 0%, " +
     videoDivide +
     "% " +
-    cursorY +
+    cursor[1] +
     "%, " +
-    (cursorX + cursorRadius) +
+    (cursor[0] + cursorRadius) +
     "% " +
-    cursorY +
+    cursor[1] +
     "%, " +
-    cursorX +
+    cursor[0] +
     "% " +
-    (cursorY - cursorRadius) +
+    (cursor[1] - cursorRadius) +
     "%, " +
-    (cursorX - cursorRadius) +
+    (cursor[0] - cursorRadius) +
     "% " +
-    cursorY +
+    cursor[1] +
     "%, " +
-    cursorX +
+    cursor[0] +
     "% " +
-    (cursorY + cursorRadius) +
+    (cursor[1] + cursorRadius) +
     "%, " +
-    (cursorX + cursorRadius) +
+    (cursor[0] + cursorRadius) +
     "% " +
-    cursorY +
+    cursor[1] +
     "%, " +
     videoDivide +
     "% " +
-    cursorY +
+    cursor[1] +
     "%, " +
     videoDivide +
     "% 100%, 100% 100%, 100% 0%)";
