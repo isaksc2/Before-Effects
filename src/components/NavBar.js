@@ -10,7 +10,7 @@ export default class NavBar extends Component {
     super(props);
     this.state = {
       sticky: true,
-      user: "",
+      user: null,
     };
     this.handleUserChange = this.handleUserChange.bind(this);
   }
@@ -20,6 +20,21 @@ export default class NavBar extends Component {
   }
 
   render() {
+    const VideosPutton = () => {
+      console.log("vid butn");
+      console.log(this.state.user);
+      if (this.state.user) {
+        console.log("found user");
+        return (
+          <Button variant="contained">
+            <Link to={"/user/" + this.state.user} style={{ marginRight: 16, textDecoration: "none" }} underline="none">
+              Your videos
+            </Link>
+          </Button>
+        );
+      }
+      return null;
+    };
     return (
       <AppBar style={{ position: "sticky" }}>
         <div
@@ -48,14 +63,11 @@ export default class NavBar extends Component {
                 this.submitVideo = instance;
               }}
             />
-            <Button variant="contained">
 
-            <Link to={"/user/" + this.state.user} style={{ marginRight: 16, textDecoration: 'none' }} underline = "none">
-              Your videos
-            </Link>
-            </Button>
+            <VideosPutton></VideosPutton>
             <SignInOut
               onUserChange={(uid) => {
+                console.log("user changed");
                 this.handleUserChange(uid);
                 this.submitVideo.userChanged();
               }}

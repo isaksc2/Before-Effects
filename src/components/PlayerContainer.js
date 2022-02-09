@@ -207,7 +207,6 @@ function PlayerContainer(props) {
     }
   };
 
-
   const MouseArea = React.forwardRef((props, ref) => {
     return (
       <div
@@ -231,7 +230,7 @@ function PlayerContainer(props) {
         return;
       }
       const { x, y } = GetCursorPosition();
-      console.log(x, y);
+      //console.log(x, y);
       const rect = mouseArea.current.getBoundingClientRect();
       const x2 = (100 * (x - rect.left)) / rect.width; //x position within the element.
       const y2 = (100 * (y - rect.top)) / rect.height; //y position within the element.
@@ -285,7 +284,7 @@ function PlayerContainer(props) {
     videoDivide +
     "% 100%, 100% 100%, 100% 0%)";
   return (
-    <div style={{ }}>
+    <div style={{}}>
       <h1>{props.title}</h1>
       <Link to={"/user/" + props.uid} hidden={!props.username} color="inherit">
         {"By: " + props.username}
