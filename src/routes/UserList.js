@@ -1,4 +1,4 @@
-import { Button } from "@material-ui/core";
+import { Button, Grid } from "@material-ui/core";
 import React, { useState, useEffect, useCallback } from "react";
 import Thumbnail from "../components/Thumbnail";
 import { getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore/lite";
@@ -11,6 +11,18 @@ export default function UserList(props) {
   const [tempUsername, settempUsername] = useState("");
   const [editingUsername, seteditingUsername] = useState(false);
   const [document, setDocument] = useState(null);
+  const [currentUid, setCurrentUid] = useState(null);
+
+  // update view when current user loaded
+  var unsubscribe = authentication.onAuthStateChanged(() => {
+    if (authentication.currentUser != null) {
+      setCurrentUid(authentication.currentUser.uid);
+    } else {
+      console.log("set to null");
+      setCurrentUid(null);
+    }
+    // todo runs many times
+  });
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -27,6 +39,9 @@ export default function UserList(props) {
       }
     };
     loadPosts();
+    return () => {
+      unsubscribe();
+    };
     // eslint-disable-next-line
   }, []);
 
@@ -43,51 +58,55 @@ export default function UserList(props) {
     // eslint-disable-next-line
   }, []);
 
-  const editUsername = useCallback(async (editingUsername, tempUsername, uid) => {
-    console.log("edit");
+  const editUsername = useCallback(
+    async (editingUsername, tempUsername, uid) => {
+      console.log("edit");
 
-    // if click "save" --> save username
-    if (editingUsername) {
-      var newName = tempUsername;
-      var document = document;
-      // only save if name changed
-      if (!document || (document && !(newName === document.username))) {
-        // update or create new document
-        try {
-          if (document) {
-            // update document
-            const failed = validateDocument(document);
-            if (failed) {
-              // tried to update name too quick
-              console.log(failed);
-              return; // todo start thread?    probably not, no one would actually need to operate this fast
+      // if click "save" --> save username
+      if (editingUsername) {
+        var newName = tempUsername;
+        var newDocument = document;
+        // only save if name changed
+        if (!document || (document && !(newName === document.username))) {
+          // update or create new document
+          try {
+            if (document) {
+              // update document
+              const failed = validateDocument(document);
+              if (failed) {
+                // tried to update name too quick
+                console.log(failed);
+                return; // todo start thread?    probably not, no one would actually need to operate this fast
+              }
+              await updateDoc(doc(db, "videos", uid), {
+                latestWrite: serverTimestamp(),
+                username: newName,
+              });
+              newDocument.username = newName;
+            } else {
+              // new document
+              await setDoc(doc(db, "videos", uid), {
+                created: serverTimestamp(),
+                latestWrite: serverTimestamp(),
+                posts: "",
+                username: newName,
+              });
+              newDocument = {};
+              newDocument.username = newName;
             }
-            await updateDoc(doc(db, "videos", uid), {
-              latestWrite: serverTimestamp(),
-              username: newName,
-            });
-            document.username = newName;
-          } else {
-            // new document
-            await setDoc(doc(db, "videos", uid), {
-              created: serverTimestamp(),
-              latestWrite: serverTimestamp(),
-              posts: "",
-              username: newName,
-            });
-            document = {};
-            document.username = newName;
+            setDocument(newDocument);
+          } catch (e) {
+            console.log(e);
+            console.log("failed to update document"); // todo unknown error
           }
-          setDocument(document);
-        } catch (e) {
-          console.log(e);
-          console.log("failed to update document"); // todo unknown error
         }
       }
-    }
-    // swap button style
-    seteditingUsername(!editingUsername);
-  }, []);
+      // swap button style
+      seteditingUsername(!editingUsername);
+    },
+    [document] // todo probably add other arguments too, they dont call the function when update, just redefine the body
+  );
+  console.log(!(currentUid === props.uid));
   return (
     <div style={{ marginTop: 80 }}>
       <TextField
@@ -97,37 +116,38 @@ export default function UserList(props) {
         value={document && !editingUsername ? document.username : tempUsername}
         label="Username"
       ></TextField>
-      <Button
-        hidden={!(props.uid === authentication.currentUser.uid)}
-        onClick={() => {
-          editUsername(editingUsername, tempUsername, props.uid);
-        }}
-      >
-        {editUsernameIcon(editingUsername)}
-      </Button>
-      <div>
+      {currentUid === props.uid && (
+        <Button
+          onClick={() => {
+            editUsername(editingUsername, tempUsername, props.uid);
+          }}
+        >
+          {editUsernameIcon(editingUsername)}
+        </Button>
+      )}
+      <Grid container spacing={2}>
         {document && document.posts ? (
           document.posts
             .split("¤")
             .map((post) => post.split(";"))
             .map((post) => (
-              <Thumbnail
-                uid={props.uid}
-                username={document.username}
-                vID1={post[0]}
-                vID2={post[1]}
-                title={post[2]}
-                postID={post[3]}
-              ></Thumbnail>
+              <Grid item>
+                <Thumbnail
+                  uid={props.uid}
+                  username={document.username}
+                  vID1={post[0]}
+                  vID2={post[1]}
+                  title={post[2]}
+                  postID={post[3]}
+                ></Thumbnail>
+              </Grid>
             ))
         ) : (
           <h1>
-            {props.uid === authentication.currentUser.uid
-              ? "You have not posted any videos yet"
-              : "This user has not posted any video yet"}
+            {props.uid === currentUid ? "You have not posted any videos yet" : "This user has not posted any video yet"}
           </h1>
         )}
-      </div>
+      </Grid>
     </div>
   );
 }

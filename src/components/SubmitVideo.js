@@ -108,6 +108,8 @@ export default class SubmitVideo extends Component {
   };
 
   openModal = () => {
+    console.log(authentication);
+    console.log(authentication.currentUser);
     this.setState({ modalIsOpen: true });
   };
 
