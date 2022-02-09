@@ -41,7 +41,7 @@ const CustomSlider = withStyles({
     },
   },
   thumb: {
-    height: 340,
+    height: window.innerHeight,
     width: 4,
     color: "#fff",
     borderRadius: 0,
@@ -248,8 +248,16 @@ function PlayerContainer(props) {
 
   // render
   const { classes } = props;
-  const opts1 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 } };
-  const opts2 = { playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 } };
+  const opts1 = {
+    height: window.innerHeight,
+    width: "100%",
+    playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 },
+  };
+  const opts2 = {
+    height: window.innerHeight,
+    width: "100%",
+    playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 },
+  };
   const polygon =
     "polygon(" +
     videoDivide +
