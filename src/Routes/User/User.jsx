@@ -3,9 +3,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import Thumbnail from "Routes/User/Thumbnail.jsx";
 import { getDoc, doc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore/lite";
 import { authentication, db } from "Firebase";
-import { MAX_USERNAME_LENGTH } from "Constants";
+import { MAX_USERNAME_LENGTH } from "Constants/Constants";
 import { TextField } from "@material-ui/core";
-import { validateDocument } from "Util.js";
+import { validateDocument } from "Validation/DatabaseProtection.js";
 
 export default function UserList(props) {
   const [tempUsername, settempUsername] = useState("");

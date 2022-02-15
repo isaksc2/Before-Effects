@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button, Slider } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
-import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "../Constants.js";
+import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "Constants/Constants.js";
 import YouTube from "react-youtube";
 import GetCursorPosition from "cursor-position";
 

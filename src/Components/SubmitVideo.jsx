@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { Button, TextField } from "@material-ui/core";
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore/lite";
-import { authentication, db } from "../Firebase.js";
-import UploadPopup from "./UploadPopup.js";
+import { authentication, db } from "Firebase.js";
+import UploadPopup from "Components/UploadPopup.jsx";
 import Modal from "react-modal";
-import { validateDocument } from "../Util.js";
+import { validateDocument } from "Validation/DatabaseProtection.js";
 
 const customStyles = {
   content: {
