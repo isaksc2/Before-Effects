@@ -1,13 +1,13 @@
 import { ThemeProvider } from "@material-ui/core/styles";
-import "./App.css";
+import "App.css";
 //changes to imports
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
-import Home from "./routes/Home";
-import UserList from "./routes/UserList";
-import NavBar from "./components/NavBar";
+import Home from "Routes/Home/Home";
+import UserList from "Routes/User/User";
+import NavBar from "Components/NavBar";
 import { createTheme } from "@material-ui/core/styles";
-import PlayerContainer from "./components/PlayerContainer";
-import IntermediatePlayer from "./components/IntermediatePlayer";
+import PlayerContainer from "Components/PlayerContainer";
+import IntermediatePlayer from "Components/IntermediatePlayer";
 import { useEffect } from "react";
 
 const theme = createTheme({

@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import PlayerContainer from "../components/PlayerContainer";
-import logo from "../images/logo.png";
+import PlayerContainer from "Components/PlayerContainer";
+import logo from "Assets/Images/logo.png";
 import { Button } from "@material-ui/core";
-import useScrollBlock from "../helper/useScrollBlock";
-import { disableScroll, enableScroll } from "../helper/ScrollInput";
+import useScrollBlock from "Helper/useScrollBlock";
+import { disableScroll, enableScroll } from "Helper/ScrollInput";
 //import disableScroll from "disable-scroll";
 import createScrollSnap from "scroll-snap";
 import useScrollSnap from "react-use-scroll-snap";

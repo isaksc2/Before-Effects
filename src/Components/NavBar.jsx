@@ -3,7 +3,7 @@ import { AppBar, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import SubmitVideo from "./SubmitVideo";
 import SignInOut from "./SignInOut";
-import logo from "../images/logo.png";
+import logo from "Assets/Images/logo.png";
 
 export default class NavBar extends Component {
   constructor(props) {
