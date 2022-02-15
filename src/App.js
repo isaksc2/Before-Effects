@@ -8,6 +8,7 @@ import NavBar from "./components/NavBar";
 import { createTheme } from "@material-ui/core/styles";
 import PlayerContainer from "./components/PlayerContainer";
 import IntermediatePlayer from "./components/IntermediatePlayer";
+import { useEffect } from "react";
 
 const theme = createTheme({
   palette: {
@@ -60,6 +61,10 @@ function HardPost() {
 }
 
 function App() {
+  useEffect(() => {
+    document.body.style.backgroundColor = "#111111";
+  }, []);
+
   return (
     <BrowserRouter>
       <div className="App">

@@ -35,26 +35,30 @@ window.YTConfig = {
 const CustomSlider = withStyles({
   root: {
     color: "#52af77",
-    height: 8,
+    height: 0,
     "&$vertical": {
       width: 8,
     },
   },
   thumb: {
-    height: window.innerHeight,
-    width: 4,
+    height: window.innerHeight * 0.8,
+    display: "inline-block",
+    width: 1,
     color: "#fff",
     borderRadius: 0,
     //backgroundColor: "#fff",
     //border: "2px solid currentColor",
-    //marginTop: 0,
+    marginTop: -13,
     marginBottom: 0,
-    marginLeft: -2,
-    "&:focus, &:hover": {
-      boxShadow: "0px 0px 0px 8px rgba(84, 199, 97, 0.16)",
+    marginLeft: -0.5,
+    "&:focus": {
+      boxShadow: "0px 0px 0px 0px rgba(0, 0, 0, 0.10)",
+    },
+    "&:hover": {
+      boxShadow: "0px 0px 0px 30px rgba(0, 0, 0, 0.26)",
     },
     "&$active": {
-      boxShadow: "0px 0px 0px 12px rgba(84, 199, 97, 0.16)",
+      boxShadow: "0px 0px 0px 12px rgba(0.4, 0.4, 0.4, 0.10)",
     },
   },
   active: {},
@@ -215,7 +219,7 @@ function PlayerContainer(props) {
         ref={ref}
         className={classes.childDiv}
         hidden={false}
-        style={{ zIndex: 1000, position: "relative", color: "#00f000", pointerEvents: "none" }}
+        style={{ zIndex: 1000, position: "relative", pointerEvents: "none" }}
         //onMouseMove={_onMouseMove.bind(this)}
       ></div>
     );
@@ -249,14 +253,14 @@ function PlayerContainer(props) {
   // render
   const { classes } = props;
   const opts1 = {
-    height: window.innerHeight,
+    height: window.innerHeight * 0.8,
     width: "100%",
-    playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1, mute: 1 },
+    playerVars: { showinfo: 1, modestbranding: true, controls: 1, loop: 1, mute: 1 },
   };
   const opts2 = {
-    height: window.innerHeight,
+    height: window.innerHeight * 0.8,
     width: "100%",
-    playerVars: { showinfo: 0, modestbranding: true, controls: 0, loop: 1 },
+    playerVars: { showinfo: 1, modestbranding: true, controls: 1, loop: 1 },
   };
   const polygon =
     "polygon(" +
@@ -298,16 +302,23 @@ function PlayerContainer(props) {
       <Link to={"/user/" + props.uid} hidden={!props.username} color="inherit">
         {"By: " + props.username}
       </Link>
-      <div className={classes.parentDiv}>
-        <MouseArea ref={mouseArea}>aaaa</MouseArea>
-        <div className={classes.childDiv}>
+      <div className={classes.parentDiv} style={{}}>
+        <MouseArea ref={mouseArea} style={{}}>
+          aaaa
+        </MouseArea>
+        <div className={classes.childDiv} style={{}}>
           <YouTube videoId={props.vID1} opts={opts1} onReady={onplayer1Ready} onStateChange={onplayer1StateChange} />
         </div>
-        <div className={classes.childDiv} style={{ clipPath: polygon }}>
+        <div className={classes.childDiv} style={{ clipPath: polygon, zIndex: 1200, position: "relative" }}>
           <YouTube videoId={props.vID2} opts={opts2} onReady={onplayer2Ready} onStateChange={onplayer2StateChange} />
         </div>
-        <div className={classes.childDiv}>
-          <CustomSlider value={videoDivide} step={0.1} onChange={(e, val) => setVideoDivide(val)}></CustomSlider>
+        <div className={classes.childDiv} style={{}}>
+          <CustomSlider
+            value={videoDivide}
+            step={0.1}
+            onChange={(e, val) => setVideoDivide(val)}
+            style={{ zIndex: 3000 }}
+          ></CustomSlider>
         </div>
       </div>
       <div>
