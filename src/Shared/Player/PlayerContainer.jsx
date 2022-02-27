@@ -1,14 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Slider } from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
+import { Button, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
 import { UNSTARTED, ENDED, PLAYING, PAUSED, BUFFERING, CUED } from "Constants/Constants.js";
 import YouTube from "react-youtube";
 import GetCursorPosition from "cursor-position";
+import { CleanLink } from "Shared/CleanLink.style";
+import { OverlapParent, OverlapChild } from "Shared/Overlap.style.js";
 
-// style of overlaying 2 videos
-const styles = (theme) => ({
-  parentDiv: {
+const PREFIX = "PlayerContainer";
+
+const classes = {
+  root: `${PREFIX}-root`,
+  thumb: `${PREFIX}-thumb`,
+  active: `${PREFIX}-active`,
+  valueLabel: `${PREFIX}-valueLabel`,
+  track: `${PREFIX}-track`,
+  rail: `${PREFIX}-rail`,
+  vertical: `${PREFIX}-vertical`,
+  parentDiv: `${PREFIX}-parentDiv`,
+  childDiv: `${PREFIX}-childDiv`,
+  wrapper: `${PREFIX}-wrapper`,
+};
+
+const Root = styled("div")(({ theme }) => ({
+  [`& .${classes.parentDiv}`]: {
     display: "grid",
     gridTemplateColumns: "1fr",
     padding: "0px", // 50
@@ -16,76 +31,23 @@ const styles = (theme) => ({
     gridRowStart: 1,
     gridColumnStart: 1,
   },
-  childDiv: {
+
+  [`&.${classes.childDiv}`]: {
     gridColumn: 1,
     gridRow: 1,
   },
-  wrapper: {
+
+  [`& .${classes.wrapper}`]: {
     pointerEvents: "none",
     gridColumn: 1,
     gridRow: 1,
   },
-});
+}));
 
 // fixes react-youtube error (?)
 window.YTConfig = {
   host: "https://www.youtube.com",
 };
-
-const CustomSlider = withStyles({
-  root: {
-    color: "#52af77",
-    height: 0,
-    "&$vertical": {
-      width: 8,
-    },
-  },
-  thumb: {
-    height: window.innerHeight * 0.8,
-    display: "inline-block",
-    width: 1,
-    color: "#fff",
-    borderRadius: 0,
-    //backgroundColor: "#fff",
-    //border: "2px solid currentColor",
-    marginTop: -13,
-    marginBottom: 0,
-    marginLeft: -0.5,
-    "&:focus": {
-      boxShadow: "0px 0px 0px 0px rgba(0, 0, 0, 0.10)",
-    },
-    "&:hover": {
-      boxShadow: "0px 0px 0px 30px rgba(0, 0, 0, 0.26)",
-    },
-    "&$active": {
-      boxShadow: "0px 0px 0px 12px rgba(0.4, 0.4, 0.4, 0.10)",
-    },
-  },
-  active: {},
-  valueLabel: {
-    left: "calc(-50% + 4px)",
-  },
-  track: {
-    height: 0,
-    borderRadius: 4,
-  },
-  rail: {
-    height: 0,
-    borderRadius: 4,
-  },
-  vertical: {
-    "& $rail": {
-      width: 8,
-    },
-    "& $track": {
-      width: 8,
-    },
-    "& $thumb": {
-      marginLeft: -8,
-      marginBottom: -11,
-    },
-  },
-})(Slider);
 
 function PlayerContainer(props) {
   const [videoDivide, setVideoDivide] = useState(50);
@@ -215,13 +177,13 @@ function PlayerContainer(props) {
 
   const MouseArea = React.forwardRef((props, ref) => {
     return (
-      <div
+      <Root
         ref={ref}
         className={classes.childDiv}
         hidden={false}
         style={{ zIndex: 1000, position: "relative", pointerEvents: "none" }}
         //onMouseMove={_onMouseMove.bind(this)}
-      ></div>
+      ></Root>
     );
   });
   const mouseArea = useRef(null);
@@ -241,6 +203,7 @@ function PlayerContainer(props) {
       const x2 = (100 * (x - rect.left)) / rect.width; //x position within the element.
       const y2 = (100 * (y - rect.top)) / rect.height; //y position within the element.
       setCursor([x2, y2]);
+      setVideoDivide(x2);
     });
 
     return () => {
@@ -251,7 +214,6 @@ function PlayerContainer(props) {
   }, []);
 
   // render
-  const { classes } = props;
   const opts1 = {
     height: window.innerHeight * 0.8,
     width: "100%",
@@ -298,29 +260,22 @@ function PlayerContainer(props) {
     "% 100%, 100% 100%, 100% 0%)";
   return (
     <div style={{}}>
-      <h1>{props.title}</h1>
-      <Link to={"/user/" + props.uid} hidden={!props.username} color="inherit">
-        {"By: " + props.username}
-      </Link>
-      <div className={classes.parentDiv} style={{}}>
+      <Typography variant="h2">{props.title}</Typography>
+      <CleanLink to={"/user/" + props.uid} hidden={!props.username} color="inherit">
+        <Typography variant="h5">{"By " + props.username}</Typography>
+      </CleanLink>
+      <OverlapParent>
         <MouseArea ref={mouseArea} style={{}}>
           aaaa
         </MouseArea>
-        <div className={classes.childDiv} style={{}}>
+        <OverlapChild>
           <YouTube videoId={props.vID1} opts={opts1} onReady={onplayer1Ready} onStateChange={onplayer1StateChange} />
-        </div>
-        <div className={classes.childDiv} style={{ clipPath: polygon, zIndex: 1200, position: "relative" }}>
+        </OverlapChild>
+        <OverlapChild style={{ clipPath: polygon, position: "relative" }}>
           <YouTube videoId={props.vID2} opts={opts2} onReady={onplayer2Ready} onStateChange={onplayer2StateChange} />
-        </div>
-        <div className={classes.childDiv} style={{}}>
-          <CustomSlider
-            value={videoDivide}
-            step={0.1}
-            onChange={(e, val) => setVideoDivide(val)}
-            style={{ zIndex: 3000 }}
-          ></CustomSlider>
-        </div>
-      </div>
+        </OverlapChild>
+        <OverlapChild></OverlapChild>
+      </OverlapParent>
       <div>
         <Button variant="contained" style={{ marginRight: 16 }} onClick={clickSFX}>
           Toggle SFX
@@ -333,4 +288,4 @@ function PlayerContainer(props) {
   );
 }
 
-export default withStyles(styles)(PlayerContainer);
+export default PlayerContainer;

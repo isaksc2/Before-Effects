@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { AppBar, Button } from "@material-ui/core";
+import { AppBar, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import SubmitVideo from "./SubmitVideo";
+import SubmitVideo from "../Upload/SubmitVideo";
 import SignInOut from "./SignInOut";
+
 import logo from "Assets/Images/logo.png";
 
 export default class NavBar extends Component {
@@ -20,14 +21,12 @@ export default class NavBar extends Component {
   }
 
   render() {
-    const VideosPutton = () => {
+    const VideosButton = () => {
       if (this.state.user) {
         return (
-          <Button variant="contained">
-            <Link to={"/user/" + this.state.user} style={{ marginRight: 16, textDecoration: "none" }} underline="none">
-              Your videos
-            </Link>
-          </Button>
+          <Link to={"/user/" + this.state.user} style={{ textDecoration: "none" }} underline="none">
+            <Button variant="contained">Your videos</Button>
+          </Link>
         );
       }
       return null;
@@ -51,6 +50,8 @@ export default class NavBar extends Component {
               display: "flex",
               position: "absolute",
               right: 0,
+              top: 10,
+              gap: 10,
             }}
           >
             <SubmitVideo
@@ -61,7 +62,7 @@ export default class NavBar extends Component {
               }}
             />
 
-            <VideosPutton></VideosPutton>
+            <VideosButton></VideosButton>
             <SignInOut
               onUserChange={(uid) => {
                 this.handleUserChange(uid);

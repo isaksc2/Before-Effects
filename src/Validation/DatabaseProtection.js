@@ -18,3 +18,12 @@ export const validateDocument = (document) => {
   }
   return false;
 };
+
+export function limitTextLength(text, maxLength) {
+  return text.substring(0, maxLength);
+}
+
+export function containsReservedChars(text) {
+  let regex = /;+|¤+/;
+  return regex.test(text);
+}

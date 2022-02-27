@@ -1,38 +1,18 @@
-import { ThemeProvider } from "@material-ui/core/styles";
 import "App.css";
 //changes to imports
 import { BrowserRouter, Route, Routes, useParams } from "react-router-dom";
 import Home from "Routes/Home/Home";
 import UserList from "Routes/User/User";
-import NavBar from "Components/NavBar";
-import { createTheme } from "@material-ui/core/styles";
-import PlayerContainer from "Components/PlayerContainer";
-import IntermediatePlayer from "Components/IntermediatePlayer";
+import NavBar from "Shared/NavBar/NavBar";
+import { ThemeProvider } from "@mui/material/styles";
+import PlayerContainer from "Shared/Player/PlayerContainer";
+import IntermediatePlayer from "Shared/Player/IntermediatePlayer";
 import { useEffect } from "react";
+import { defaultTheme } from "Core-ui/Global.theme.js";
+//import { theme } from "Core-ui/Global.theme.js";
+import { CssBaseline } from "@mui/material";
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#2e1667",
-    },
-    secondary: {
-      main: "#c7d8ed",
-    },
-  },
-  typography: {
-    fontFamily: ["Roboto"],
-    h4: {
-      fontWeight: 600,
-      fontSize: 28,
-      lineHeight: "2rem",
-    },
-    h5: {
-      fontWeight: 100,
-      lineHeight: "2rem",
-    },
-  },
-});
-
+// get user page
 function Usr() {
   let { uid } = useParams();
   return <UserList uid={uid}></UserList>;
@@ -40,7 +20,6 @@ function Usr() {
 
 // find post by fetching database
 function DynamicPost() {
-  console.log("lol");
   let { uid, postID } = useParams();
   return <IntermediatePlayer uid={uid} postID={postID}></IntermediatePlayer>;
 }
@@ -62,13 +41,16 @@ function HardPost() {
 
 function App() {
   useEffect(() => {
-    document.body.style.backgroundColor = "#111111";
+    //document.body.style.backgroundColor = "#111111";
   }, []);
 
+  //const classes = useStyles();
+
   return (
-    <BrowserRouter>
-      <div className="App">
-        <ThemeProvider theme={theme}>
+    <ThemeProvider theme={defaultTheme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <div className="App">
           <NavBar></NavBar>
           <Routes>
             <Route exact path="/" element={<Home />} />
@@ -76,9 +58,9 @@ function App() {
             <Route exact path="/user/:uid/:postID" element={<DynamicPost />}></Route>
             <Route exact path="/user/:uid/:postID/:username/:title/:vID1/:vID2" element={<HardPost />}></Route>
           </Routes>
-        </ThemeProvider>
-      </div>
-    </BrowserRouter>
+        </div>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

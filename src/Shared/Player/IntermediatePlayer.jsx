@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { getDoc, doc } from "firebase/firestore/lite";
-import { db } from "../Firebase.js";
+import { db } from "../../Firebase.js";
 import { useNavigate } from "react-router-dom";
 
 function IntermediatePlayer(props) {

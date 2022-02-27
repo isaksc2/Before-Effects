@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 import { collection, getDocs, getDoc, setDoc, doc, serverTimestamp, updateDoc } from "firebase/firestore/lite";
 import { authentication, db } from "Firebase.js";
-import UploadPopup from "Components/UploadPopup.jsx";
+import UploadPopup from "Shared/Upload/UploadPopup.jsx";
 import Modal from "react-modal";
 import { validateDocument } from "Validation/DatabaseProtection.js";
 
@@ -157,7 +157,7 @@ export default class SubmitVideo extends Component {
   render() {
     return (
       <div>
-        <Button variant="contained" onClick={this.openModal}>
+        <Button color="secondary" variant="contained" onClick={this.openModal}>
           Upload video
         </Button>
 
